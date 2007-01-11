@@ -1,0 +1,3 @@
+echo "AF3 in" > /proc/gpio/GPIO42
+echo "AF3 out" > /proc/gpio/GPIO43
+

@@ -1,0 +1,19 @@
+#!/bin/sh
+#monitoring ppp0
+export PATH=/bin:/usr/bin:/sbin:/usr/bin:/usr/sbin
+export LOG="logget -p daemon.notice -t 'basename $0'[$$]"
+$LOG "Monitoring PPP connection"
+sleep 5
+while [ 1 ]
+do
+	if 'ifconfig | grep -q ^ppp0'
+	then
+		$LOG "PPP connection ok"
+	else
+		$LOG "Starting PPP"
+		pppd call gprs
+	fi
+	sleep 120
+done
+
+
