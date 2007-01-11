@@ -1,3 +1,4 @@
+#!/bin/sh
 echo "AF1 in" > /proc/gpio/GPIO42
 echo "AF2 out" > /proc/gpio/GPIO43
 echo "AF1 out" > /proc/gpio/GPIO48
@@ -5,3 +6,4 @@ echo "AF1 in" > /proc/gpio/GPIO49
 echo "AF1 in" > /proc/gpio/GPIO50
 echo "AF1 out" > /proc/gpio/GPIO51
 echo "AF1 out" > /proc/gpio/GPIO45
+/bin/stty -F /dev/ttyS3 4800
