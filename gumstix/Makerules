@@ -1,0 +1,50 @@
+# -*-Makefile-*- #
+
+# Set this to the root of the SOS distribution
+ifeq ($(SOSROOT),)
+ROOTDIR = ../../../..
+else
+ROOTDIR = $(SOSROOT)
+endif
+
+OBJS += $(SRCS:.c=.o)
+
+INCDIR += -I$(ROOTDIR)/drivers/include
+INCDIR += -I$(ROOTDIR)/drivers/uart/include
+INCDIR += -I$(ROOTDIR)/kernel/include
+INCDIR += -I$(ROOTDIR)/modules/include
+INCDIR += -I$(ROOTDIR)/processor/posix/include
+
+DEFS += -DNO_PID_PROC -DNO_PID_PLAT
+CFLAGS += -Werror
+CC = arm-linux-gcc
+
+
+HOST = $(shell uname -s)
+ifeq ($(HOST), Darwin)
+CFLAGS += -DBBIG_ENDIAN
+else
+CFLAGS += -DLLITTLE_ENDIAN
+endif
+
+include $(ROOTDIR)/tools/sos_server/lib/Makesossrvlib
+
+
+%.o : %.c
+	$(CC) -c $(CFLAGS) $(DEFS) $(INCDIR) $< -o $@
+
+
+$(PROJ): $(OBJS)
+	$(CC) $(OBJS) $(LIBS) -o $@
+
+%.exe : $(OBJS)
+	$(CC) $(OBJS) $(LIBS) -o $@
+
+all: $(PROJ).exe
+
+clean:
+	rm -fr *~ *.o $(PROJ) $(PROJ).exe
+
+
+
+
