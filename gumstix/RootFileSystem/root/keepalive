@@ -13,7 +13,7 @@ do
 		$LOG "Starting PPP"
 		pppd call gprs
 	fi
-	sleep 120
+	sleep 180
 done
 
 
