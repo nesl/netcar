@@ -11,13 +11,13 @@
 #include <mts310sb.h>
 
 #define ACCEL_TEST_APP_TID 0
-#define ACCEL_TEST_APP_INTERVAL 40
+#define ACCEL_TEST_APP_INTERVAL 20
 
 #define ACCEL_TEST_PID DFLT_APP_ID0
 
 #define UART_MSG_LEN 3
 
-#define SAMPLES_PER_MSG 10
+#define SAMPLES_PER_MSG 20
 // MSG_LENGTH is 4 times the size of samples per msg because we have 16 bit samples and 2 sensors.
 #define MSG_LENGTH (SAMPLES_PER_MSG * 2 * 2)
 #define MSG_ACCEL_DATA 41
