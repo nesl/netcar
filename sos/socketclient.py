@@ -3,17 +3,13 @@
 import threading
 import socket
 import sys
+import struct
 
-PROTOCOL_MODULE = 21
-SAMPLER_MODULE = 22
-PROCESSING_MODULE = 23
+ACCELEROMETER_MODULE = 0x80
 
-UART_ADDR = 65534
+ACCELEROMETER_DATA = 41
 
-SENSOR_DATA = 32
-ACK = 33
-T_PARAM = 34
-ALPHA_PARAM = 35
+SAMPLES_PER_MSG = 10
 
 class SocketClient(threading.Thread):
     """
@@ -34,34 +30,19 @@ class SocketClient(threading.Thread):
             self.start()
 
     def run(self):
+        print "start receiving"
         try:
             lastdata = -1
             while 1:
                 data = ord(self.s.recv(1))
-                if data == PROTOCOL_MODULE and lastdata == PROTOCOL_MODULE:
-                    self.s.recv(2)
-                    srcaddr = ord(self.s.recv(1))+ord(self.s.recv(1))*256
-                    msgtype = ord(self.s.recv(1))
-                    if msgtype == SENSOR_DATA:
-                        self.s.recv(3)
-                        sensor = ord(self.s.recv(1)) + ord(self.s.recv(1))*256
-                        seqno = ord(self.s.recv(1)) + ord(self.s.recv(1))*256
-
-                        print "src: %d seqno: %d sensor: %d"%(srcaddr, seqno, sensor)
-                    elif msgtype == ACK:
-                        print "received ACK from %d PROTOCOL_MODULE"%(srcaddr,)
+                print data, ACCELEROMETER_MODULE
+                if data == ACCELEROMETER_MODULE:
+                    (src_mod, dst_addr, src_addr, msg_type, msg_length) = struct.unpack("BHHBB", self.s.recv(7))
+                    print src_mod, dst_addr, src_addr, msg_type, msg_length
+                    #if ms_gtype == ACCELEROMETER_DATA:
+                    #    d = self.s.recv(msg_length)
+                    #    print map(ord, d)
                     lastdata = -1
-                elif data == PROCESSING_MODULE and lastdata == PROCESSING_MODULE:
-                    self.s.recv(2)
-                    srcaddr = ord(self.s.recv(1))+ord(self.s.recv(1))*256
-                    msgtype = ord(self.s.recv(1))
-                    if msgtype == ACK:
-                        self.s.recv(1)
-                        value = ord(self.s.recv(1)) + ord(self.s.recv(1))*256
-                        print "received ACK from %d PROCESS_MODULE"%(srcaddr,)
-                        print "new value set to %d"%(value,)
-                    lastdata = -1
-                   
                 else:
                     lastdata = data
         except:
@@ -80,6 +61,9 @@ class SocketClient(threading.Thread):
         
 
 if(__name__ == "__main__"):
+
+
+
     print "Usage: if you want to send a T value to a node"
     print "       enter it as following and press enter:"
     print "       t <nodeid> <TValue>\n"
@@ -92,10 +76,10 @@ if(__name__ == "__main__"):
     sc = SocketClient("127.0.0.1", 7915)
     while 1:
         line = sys.stdin.readline().strip()
-
+        print line
         if line == "exit":
             sc.close()
-            exit(0)
+            sys.exit()
 
         splittedline = line.split()
         if len(splittedline) == 3:
