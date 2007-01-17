@@ -17,7 +17,7 @@
 
 #define UART_MSG_LEN 3
 
-#define SAMPLES_PER_MSG 5
+#define SAMPLES_PER_MSG 10
 #define MSG_LENGTH (SAMPLES_PER_MSG * 2)
 #define MSG_ACCEL_DATA 41
 
@@ -66,9 +66,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			s->sample_nr = 0;
 			//allocate the space for the accelerometers
 			ker_timer_init(s->pid, ACCEL_TEST_APP_TID, TIMER_REPEAT);
-			if(ker_id() != 0){
-				ker_timer_start(s->pid, ACCEL_TEST_APP_TID, ACCEL_TEST_APP_INTERVAL);
-			}
+			ker_timer_start(s->pid, ACCEL_TEST_APP_TID, ACCEL_TEST_APP_INTERVAL);
 			ker_sensor_enable(s->pid, MTS310_ACCEL_0_SID);
 			break;
 
@@ -131,7 +129,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 				case ACCEL_TEST_APP_ACCEL_1_BUSY:
 					// second accel sampled, wait for timeout and go back to accel 0
 					if(s->sample_nr < SAMPLES_PER_MSG) {
-						s->accel1[s->sample_nr] = m->byte;
+						s->accel1[s->sample_nr] = m->word;
 					} else {
 						LED_DBG(LED_RED_TOGGLE);
 					}
