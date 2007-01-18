@@ -18,8 +18,7 @@
 #define UART_MSG_LEN 3
 
 #define SAMPLES_PER_MSG 20
-// MSG_LENGTH is 4 times the size of samples per msg because we have 16 bit samples and 2 sensors.
-#define MSG_LENGTH (SAMPLES_PER_MSG * 2 * 2)
+
 #define MSG_ACCEL_DATA 41
 
 enum {
@@ -35,10 +34,16 @@ typedef struct {
 	uint8_t pid;
 	uint8_t state;
 	uint8_t sample_nr;
+	uint8_t seq_nr;
 	uint16_t accel0[SAMPLES_PER_MSG];
 	uint16_t accel1[SAMPLES_PER_MSG];
 } app_state_t;
 
+typedef struct {
+	uint8_t seq_nr;
+	uint16_t accel0[SAMPLES_PER_MSG];
+	uint16_t accel1[SAMPLES_PER_MSG];
+} accel_msg_t;
 
 static int8_t accel_test_msg_handler(void *state, Message *msg);
 
@@ -65,6 +70,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			s->state = ACCEL_TEST_APP_INIT;
 			s->pid = msg->did;
 			s->sample_nr = 0;
+			s->seq_nr = 0;
 			//allocate the space for the accelerometers
 			ker_timer_init(s->pid, ACCEL_TEST_APP_TID, TIMER_REPEAT);
 			ker_timer_start(s->pid, ACCEL_TEST_APP_TID, ACCEL_TEST_APP_INTERVAL);
@@ -137,19 +143,23 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 					s->sample_nr++;
 					if(s->sample_nr >= SAMPLES_PER_MSG){
 						//we collected enough samples, send out a message
-						uint8_t *data_msg;
+						accel_msg_t *data_msg;
 					
 						s->sample_nr = 0;
-						
-						data_msg = sys_malloc (MSG_LENGTH);
+
+						data_msg = (accel_msg_t*)sys_malloc (sizeof(accel_msg_t));
+
+						//we specifically don't check for an overflow since we want to start at 0 again.
+						data_msg->seq_nr = s->seq_nr++;
+
 						
 						if ( data_msg ) {
-							memcpy((void*)&(data_msg[0]), (void*)s->accel0, MSG_LENGTH/2);
-							memcpy((void*)&(data_msg[MSG_LENGTH/2]), (void*)s->accel1, MSG_LENGTH/2);
+							memcpy((void*)data_msg->accel0, (void*)s->accel0, SAMPLES_PER_MSG*sizeof(uint16_t));
+							memcpy((void*)data_msg->accel1, (void*)s->accel1, SAMPLES_PER_MSG*sizeof(uint16_t));
 
 							sys_post_net ( s->pid,
 														 MSG_ACCEL_DATA,
-														 MSG_LENGTH,
+														 sizeof(accel_msg_t),
 														 data_msg,
 														 SOS_MSG_RELEASE,
 														 BCAST_ADDRESS);
@@ -176,7 +186,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 						
 			sys_post_uart ( s->pid,
 										 MSG_ACCEL_DATA,
-										 MSG_LENGTH,
+										 sizeof(accel_msg_t),
 										 msg->data,
 										 SOS_MSG_RELEASE,
 										 UART_ADDRESS);
