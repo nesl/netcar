@@ -4,6 +4,7 @@ import thread
 import socket
 import sys
 import struct
+import time
 import wx
 import wx.lib.plot as plot
 
@@ -12,6 +13,7 @@ ACCELEROMETER_MODULE = 0x80
 ACCELEROMETER_DATA = 41
 
 SAMPLES_PER_MSG = 20
+SAMPLE_RATE = 50
 
 EVT_RESULT_ID = wx.NewId()
 
@@ -79,105 +81,82 @@ class BaseStation(wx.Frame):
 
     def OnResult(self, event):
 
-        accel0 = event.data[0]
-        accel1 = event.data[1]
+        accel0 = event.data['accel0']
+        accel1 = event.data['accel1']
 
-        for i in range(len(accel0)):
-            self.d0.append((self.index, accel0[i]))
-            self.d1.append((self.index, accel1[i]))
-            self.index+=1
-            
+        self.d0 += accel0
+        self.d1 += accel1
+        
         line0 = plot.PolyLine(self.d0, legend='accel0', colour='green', width=1)
         line1 = plot.PolyLine(self.d1, legend='accel1', colour='red', width=1)
         gc = plot.PlotGraphics([line0, line1], 'Line Graph', 'X Axis', 'Y Axis')
-        self.client.Draw(gc, xAxis= (self.index-500, self.index), yAxis= (0,1024))
+        # the X axis shows 60 seconds from the last sample.
+        self.client.Draw(gc, xAxis= (self.d0[max(-500, -len(self.d0))][0], self.d0[-1][0]), yAxis= (0,1024))
         
             
+        
     def input_thread(self):
-        print "Usage: if you want to send a T value to a node"
-        print "       enter it as following and press enter:"
-        print "       t <nodeid> <TValue>\n"
-        print "       to send an alpha value to the processing"
-        print "       module, enter it as following:"
-        print "       a <nodeid> <alpha_value>\n"
-        print "Note:  the client does not any checking on the values,"
-        print "       thus please make sure that you enter only integers.\n"
-        print "To exit, enter 'exit' and hit enter.\n"
-        while 1:
-            line = sys.stdin.readline().strip()
-            print line
-            if line == "exit":
-                self.sc.close()
-                sys.exit()
-
-            splittedline = line.split()
-            if len(splittedline) == 3:
-                if splittedline[0] == "t":
-                    try:
-                        nodeid = int(splittedline[1])
-                    except:
-                        print "Error: nodeid is not an integer\n"
-                        continue
-                    try:
-                        value = int(splittedline[2])
-                    except:
-                        print "Error: t-vale is not an integer\n"
-                        continue
-
-                    message = "" + chr(PROCESSING_MODULE) + chr(PROCESSING_MODULE) #did, sid
-                    message += chr(nodeid%256) + chr(nodeid/256) #daddr
-                    message += chr(UART_ADDR%256) + chr(UART_ADDR/256) #saddr
-                    message += chr(T_PARAM) #msg type MSG_DATA_SET_PARAM
-                    message += chr(2) #data len
-                    message += chr(value%256) + chr(value/256)
-                    print "sending message to nodeid %s value %d"%(nodeid, value)
-                    self.sc.send(message)
-                elif splittedline[0] == "a":
-                    try:
-                        nodeid = int(splittedline[1])
-                    except:
-                        print "Error: nodeid is not an integer\n"
-                        continue
-                    try:
-                        value = float(splittedline[2])
-                    except:
-                        print "Error: alpha is not a double between 0 and 1\n"
-                        continue
-                    if value < 0:
-                        print "Error: alpha value can't be <0\n"
-                        continue
-                    if value > 1:
-                        print "Error: alpha value can't be > 0\n"
-                        continue
-
-                    #discretize the value into 16bit
-                    value = int(value*((1<<16)-1))
-
-                    message = "" + chr(PROCESSING_MODULE) + chr(PROCESSING_MODULE) #did, sid
-                    message += chr(nodeid%256) + chr(nodeid/256) #daddr
-                    message += chr(UART_ADDR%256) + chr(UART_ADDR/256) #saddr
-                    message += chr(ALPHA_PARAM) #msg type MSG_DATA_SET_PARAM
-                    message += chr(2) #data len
-                    message += chr(value%256) + chr(value/256)
-                    print "sending message to nodeid %s value %d (discretized to 16bit)"%(nodeid, value)
-                    self.sc.send(message)
-
+        """ currently we don't use the input thread.
+        """
+        pass
+    
     def output_thread(self):
         lastdata = -1
+        nodes = {}
+        start_time = time.time()
         while 1:
             data = ord(self.sc.s.recv(1))
             #print data, ACCELEROMETER_MODULE
             if data == ACCELEROMETER_MODULE:
-                (src_mod, dst_addr, src_addr, msg_type, msg_length) = struct.unpack("<BHHBB", self.sc.s.recv(7))
+                time_rx = time.time() - start_time
+                try:
+                    s = self.sc.s.recv(7)
+                    (src_mod, dst_addr, src_addr, msg_type, msg_length) = struct.unpack("<BHHBB", s)
+                except struct.error:
+                    print struct.error
+                    print "bad msg header:", map(ord, s)
                 #print src_mod, dst_addr, src_addr, msg_type, msg_length
                 if msg_type == ACCELEROMETER_DATA:
-                    accel0 = struct.unpack("<"+msg_length/4*'H', self.sc.s.recv(msg_length / 2))
-                    accel1 = struct.unpack("<"+msg_length/4*'H', self.sc.s.recv(msg_length / 2))
+                    seq_nr = ord(self.sc.s.recv(1))
+                    try:
+                        s = self.sc.s.recv(SAMPLES_PER_MSG*2)
+                        accel0 = struct.unpack("<"+msg_length/4*'H', s)
+                    except struct.error:
+                        print struct.error
+                        print "bad string for accel0:", map(ord, s)
+                    try:
+                        s = self.sc.s.recv(SAMPLES_PER_MSG*2)
+                        accel1 = struct.unpack("<"+msg_length/4*'H', s)
+                    except struct.error:
+                        print struct.error
+                        print "bad string for accel1:", map(ord, s)
+                        
+                    #try to find out the sample times
+                    if src_addr not in nodes.keys():
+                        #never seen the node before.
+                        nodes[src_addr] = {'seq_nr': seq_nr, 'last_seen': time_rx}
+                    else:
+                        d0 = []
+                        d1 = []
 
-                    wx.PostEvent(self, ResultEvent((accel0, accel1)))
+                        if seq_nr != (nodes[src_addr]['seq_nr'] + 1)%256:
+                            #we missed messages. maybe we should compensate for them?
+                            #for i in range(
+                            print "Missed %d messages"%(seq_nr - nodes[src_addr]['seq_nr'], )
 
-                    print accel0
-                    print accel1
+                        # correlate the samples with time
+                        # FIXME: this is only an estimate based on the reception time of the sample.
+                        for i in range(len(accel0)):
+                            d0.append((time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel0[i]))
+                            d1.append((time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel1[i]))
+
+                        nodes[src_addr]['seq_nr'] = seq_nr
+                        nodes[src_addr]['last_seen'] = time_rx
+                        wx.PostEvent(self, ResultEvent({'accel0': d0, 'accel1': d1}))
+
+                    #print seq_nr
+                    #print accel0
+                    #print accel1
                 lastdata = -1
             else:
                 lastdata = data
