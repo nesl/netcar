@@ -10,4 +10,4 @@ include $(ROOTDIR)/config/Makerules
 
 vpath loader.c $(ROOTDIR)/modules/management/loader/
 vpath accel_sampler.c ../modules/
-vpath accel_sensor.c $(ROOTDIR)modules/sensordrivers/mts310/accel/
+vpath accel_sensor.c $(ROOTDIR)/modules/sensordrivers/mts310/accel/
