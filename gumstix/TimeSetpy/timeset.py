@@ -4,6 +4,7 @@
 
 import time, os, threading
 import gps
+import sys
 
 class TimeSet( threading.Thread):
 
@@ -30,13 +31,15 @@ class TimeSet( threading.Thread):
 				tempTime = tempTime[1]
 				tempDate = tempDate.split('/')
 				tempTime = tempTime.split(':')
-				os.popen("/bin/date -u %s%s%s%s%s.%s" % (tempDate[0],tempDate[1],tempTime[0],tempTime[1],tempDate[2],tempTime[2]))
+				os.popen("/bin/date -u %s%s%s%s%s.%s" % (tempDate[1],tempDate[0],tempTime[0],tempTime[1],tempDate[2],tempTime[2]))
 				print "set"
+				self.running = 0
 				return
+				#sys.exit(1)
 				#setting time using date
 			else:
 				print tempTime
-		time.sleep(3)
+		time.sleep(1)
 
         #we don't run aymore. stop the gps thread too
         self.gpsThread.running = 0
