@@ -1,7 +1,0 @@
-config BR2_PACKAGE_IPKG
-        bool "ipkg"
-        default n
-        help
-	  ipkg
-
-	  http://handhelds.org/
