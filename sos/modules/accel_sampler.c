@@ -156,13 +156,22 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 						if ( data_msg ) {
 							memcpy((void*)data_msg->accel0, (void*)s->accel0, SAMPLES_PER_MSG*sizeof(uint16_t));
 							memcpy((void*)data_msg->accel1, (void*)s->accel1, SAMPLES_PER_MSG*sizeof(uint16_t));
-
-							sys_post_net ( s->pid,
-														 MSG_ACCEL_DATA,
-														 sizeof(accel_msg_t),
-														 data_msg,
-														 SOS_MSG_RELEASE,
-														 BCAST_ADDRESS);
+							if(ker_id() == 0){
+								LED_DBG(LED_GREEN_TOGGLE);
+								sys_post_uart ( s->pid,
+																MSG_ACCEL_DATA,
+																sizeof(accel_msg_t),
+																data_msg,
+																SOS_MSG_RELEASE,
+																BCAST_ADDRESS);
+							} else {
+								sys_post_net ( s->pid,
+															 MSG_ACCEL_DATA,
+															 sizeof(accel_msg_t),
+															 data_msg,
+															 SOS_MSG_RELEASE,
+															 BCAST_ADDRESS);
+							}
 						} else {
 							LED_DBG(LED_RED_TOGGLE);
 						}
@@ -180,7 +189,8 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			}
 			break;
 
-	case MSG_ACCEL_DATA:
+			/*	
+  case MSG_ACCEL_DATA:
 		if(ker_id() == 0) {
 			LED_DBG(LED_GREEN_TOGGLE);
 						
@@ -191,7 +201,8 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 										 SOS_MSG_RELEASE,
 										 UART_ADDRESS);
 			
-		}
+	 }
+			*/
 	default:
 		return -EINVAL;
 		break;
