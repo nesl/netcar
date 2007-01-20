@@ -5,14 +5,17 @@
 #############################################################
 IPKG_NAME:=ipkg
 IPKG_VERSION:=0.99.149
+IPKG_RELEASE:=ud1.2
+IPKG_MD5SUM:=975cc419d6db5fb279dc58177c68373b
+
 IPKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 IPKG_SITE:=http://www.handhelds.org/packages/ipkg \
 	http://www.gtlib.gatech.edu/pub/handhelds.org/packages/ipkg \
 	http://ftp.gwdg.de/pub/linux/handhelds/packages/ipkg
 IPKG_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 IPKG_CAT:=zcat
-IPKG_BINARY:=ipkg/ipkg
-IPKG_TARGET_BINARY:=usr/sbin/ipkg
+IPKG_BINARY:=ipkg
+IPKG_TARGET_BINARY:=bin/ipkg
 
 
 $(DL_DIR)/$(IPKG_SOURCE):
@@ -63,9 +66,7 @@ $(TARGET_DIR)/$(IPKG_TARGET_BINARY): $(IPKG_DIR)/$(IPKG_BINARY)
 ipkg: uclibc $(TARGET_DIR)/$(IPKG_TARGET_BINARY)
 
 ipkg-clean:
-	rm -f  $(TARGET_DIR)/usr/sbin/ipkg
-	rm -f  $(TARGET_DIR)/usr/sbin/chat
-	rm -rf $(TARGET_DIR)/etc/ppp
+	rm -f  $(TARGET_DIR)/bin/ipkg
 	$(MAKE) DESTDIR=$(TARGET_DIR)/usr CC=$(TARGET_CC) -C $(IPKG_DIR) uninstall
 	-$(MAKE) -C $(IPKG_DIR) clean
 
