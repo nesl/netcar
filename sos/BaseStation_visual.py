@@ -17,6 +17,11 @@ SAMPLE_RATE = 50
 
 EVT_RESULT_ID = wx.NewId()
 
+collist = ['green',
+           'red',
+           'blue',
+           'cyan']
+
 def EVT_RESULT(win, func):
     """Define Result Event."""
     win.Connect(-1, -1, EVT_RESULT_ID, func)
@@ -59,11 +64,12 @@ class BaseStation(wx.Frame):
         wx.Frame.__init__(self, parent, id, title, size=(180, 280))
 
         self.client = plot.PlotCanvas(self)
+        self.client.SetEnableLegend(True)
         self.Show(True)
 
         self.index = 0
-        self.d0 = []
-        self.d1 = []
+        self.d0 = {}
+        self.d1 = {}
         
         EVT_RESULT(self,self.OnResult)
 
@@ -81,17 +87,26 @@ class BaseStation(wx.Frame):
 
     def OnResult(self, event):
 
+        src_addr = event.data['src_addr']
         accel0 = event.data['accel0']
         accel1 = event.data['accel1']
 
-        self.d0 += accel0
-        self.d1 += accel1
-        
-        line0 = plot.PolyLine(self.d0, legend='accel0', colour='green', width=1)
-        line1 = plot.PolyLine(self.d1, legend='accel1', colour='red', width=1)
-        gc = plot.PlotGraphics([line0, line1], 'Line Graph', 'X Axis', 'Y Axis')
-        # the X axis shows 60 seconds from the last sample.
-        self.client.Draw(gc, xAxis= (self.d0[max(-500, -len(self.d0))][0], self.d0[-1][0]), yAxis= (0,1024))
+        if src_addr not in self.d0.keys():
+            self.d0[src_addr] = []
+            self.d1[src_addr] = []
+        self.d0[src_addr] += accel0
+        self.d1[src_addr] += accel1
+        self.d0[src_addr][0:max(-600, -len(self.d0[src_addr]))] = []
+        self.d1[src_addr][0:max(-600, -len(self.d1[src_addr]))] = []
+        lines = []
+        i=0
+        for src_addr in self.d0.keys():
+            lines.append(plot.PolyLine(self.d0[src_addr], legend=str(src_addr)+' accel0', colour=collist[i], width=1))
+            lines.append(plot.PolyLine(self.d1[src_addr], legend=str(src_addr)+' accel1', colour=collist[i], width=1))
+            i += 1
+        gc = plot.PlotGraphics(lines, 'Accelerations', 'Time [s]', 'Acceleration 10bit')
+        # the X axis shows the last 500 samples
+        self.client.Draw(gc, xAxis= (self.d0[src_addr][max(-500, -len(self.d0[src_addr]))][0], self.d0[src_addr][-1][0]), yAxis= (0,1024))
         
             
         
@@ -108,7 +123,7 @@ class BaseStation(wx.Frame):
             data = ord(self.sc.s.recv(1))
             #print data, ACCELEROMETER_MODULE
             if data == ACCELEROMETER_MODULE:
-                time_rx = time.time() - start_time
+                time_rx = time.time()
                 try:
                     s = self.sc.s.recv(7)
                     (src_mod, dst_addr, src_addr, msg_type, msg_length) = struct.unpack("<BHHBB", s)
@@ -134,7 +149,8 @@ class BaseStation(wx.Frame):
                     #try to find out the sample times
                     if src_addr not in nodes.keys():
                         #never seen the node before.
-                        nodes[src_addr] = {'seq_nr': seq_nr, 'last_seen': time_rx}
+                        nodes[src_addr] = {'seq_nr': seq_nr, 'last_seen': time_rx, 'file': open(str(src_addr)+".log", 'w')}
+                        
                     else:
                         d0 = []
                         d1 = []
@@ -147,12 +163,14 @@ class BaseStation(wx.Frame):
                         # correlate the samples with time
                         # FIXME: this is only an estimate based on the reception time of the sample.
                         for i in range(len(accel0)):
-                            d0.append((time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel0[i]))
-                            d1.append((time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel1[i]))
+                            t = time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE) - start_time
+                            d0.append((t, accel0[i]))
+                            d1.append((t, accel1[i]))
+                            nodes[src_addr]['file'].write('%f\t%d\t%d\n'%(time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel0[i], accel1[i]))
 
                         nodes[src_addr]['seq_nr'] = seq_nr
                         nodes[src_addr]['last_seen'] = time_rx
-                        wx.PostEvent(self, ResultEvent({'accel0': d0, 'accel1': d1}))
+                        wx.PostEvent(self, ResultEvent({'src_addr': src_addr, 'accel0': d0, 'accel1': d1}))
 
                     #print seq_nr
                     #print accel0
