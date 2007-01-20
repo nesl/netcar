@@ -1,0 +1,33 @@
+diff -urdb ipkg-0.99.149_orig/ipkg_install.c ipkg-0.99.149/ipkg_install.c
+--- ipkg-0.99.149_orig/ipkg_install.c	2006-02-26 17:35:02.000000000 +0100
++++ ipkg-0.99.149/ipkg_install.c	2006-02-26 17:39:50.000000000 +0100
+@@ -692,6 +692,7 @@
+      pkg_vec_t *replacees;
+      abstract_pkg_t *ab_pkg = NULL;
+      int old_state_flag;
++     char* file_md5;
+ 
+      if (!pkg) {
+ 	  ipkg_message(conf, IPKG_ERROR,
+@@ -751,6 +752,21 @@
+ 	       return err;
+ 	  }
+      }
++
++     if (pkg->md5sum)
++     {
++	  file_md5 = file_md5sum_alloc(pkg->local_filename);
++	  if (strcmp(file_md5, pkg->md5sum))
++	  {
++	       ipkg_message(conf, IPKG_ERROR,
++			    "Package %s md5sum mismatch. Either the ipkg or the package index are corrupt. Try 'ipkg update'.\n",
++			    pkg->name);
++	       free(file_md5);
++	       return err;
++	  }
++	  free(file_md5);
++     }
++
+      if (pkg->tmp_unpack_dir == NULL) {
+ 	  unpack_pkg_control_files(conf, pkg);
+      }

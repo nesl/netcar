@@ -3,10 +3,12 @@
 # ipkg
 #
 #############################################################
-IPKG_NAME:=ipkg-utils
-IPKG_VERSION:=1.7
+IPKG_NAME:=ipkg
+IPKG_VERSION:=0.99.149
 IPKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-IPKG_SITE:=http://handhelds.org/packages/ipkg-utils/
+IPKG_SITE:=http://www.handhelds.org/packages/ipkg \
+	http://www.gtlib.gatech.edu/pub/handhelds.org/packages/ipkg \
+	http://ftp.gwdg.de/pub/linux/handhelds/packages/ipkg
 IPKG_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 IPKG_CAT:=zcat
 IPKG_BINARY:=ipkg/ipkg

@@ -2,5 +2,5 @@ config BR2_PACKAGE_IPKG_UTILS
 	bool "Install ipkg-utils for the target system"
 	default n
 	help
-	  Maximal ipkg utility.
+	  ipkg utility.
 

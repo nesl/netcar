@@ -1,0 +1,13 @@
+diff -urdb ipkg-0.99.149_orig/ipkg_download.c ipkg-0.99.149/ipkg_download.c
+--- ipkg-0.99.149_orig/ipkg_download.c	2006-02-26 16:33:16.000000000 +0100
++++ ipkg-0.99.149/ipkg_download.c	2006-02-26 16:50:31.000000000 +0100
+@@ -168,6 +168,8 @@
+ 	  pkg->local_filename = strdup(url);
+ 
+      } else {
++       pkg_deinit(pkg);
++       free(pkg);
+        return 0;
+      }
+ 
+Only in ipkg-0.99.149: ipkg_download.c~
