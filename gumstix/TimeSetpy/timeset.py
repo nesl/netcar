@@ -50,5 +50,7 @@ class TimeSet( threading.Thread):
         print "start Time Setting"
         self.UTCset()
 
-
+if(__name__ == "__main__"):
+    A = TimeSet()
+    A.UTCset()
                     
