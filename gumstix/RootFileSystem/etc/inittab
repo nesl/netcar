@@ -21,6 +21,11 @@ null::sysinit:/etc/init.d/rc.udev start
 null::sysinit:/etc/init.d/rc.modules start
 null::sysinit:/bin/mount -a
 null::sysinit:/bin/hostname -F /etc/hostname
+
+# Change Serial Setting and Start Bluetooth
+::wait:/root/trans
+::once:/etc/init.d/S30bluetooth start
+
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS start
 
