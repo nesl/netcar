@@ -8,6 +8,9 @@ SUCCESS = "Data successfully slogged!"
 IDNOTFOUND = "Hmm, you look lost. May I help you?" 
 TABLENAMEERR = "supplied argument is not a valid MySQL result resource"
 
+## Assume there is only one DB format and table definition file.
+## Later on, it'll be changed to match appropriate Data file and format file.
+
 class LogIntoXML:
     def __init__(self):
         self.tableOPEN = "<table>\n"
@@ -30,7 +33,7 @@ class LogIntoXML:
                 except:
                     print "Error"
         self.format = self.format.split('\n')
-        print "babao"+self.table
+        ##print "babao"+self.table
         return self.format
 
     def MakeXML(self):
@@ -39,10 +42,10 @@ class LogIntoXML:
             print item
         print self.XMLstructure
 
+## Assumption : There is only one type
+
 class DataSlog:
     def __init__(self):
-##        import urllib
-##        import urllib2
         self.sb_email = 'kimyh@ucla.edu'
         self.sb_password = 'password'
         self.sb_project_id = '73'
@@ -91,10 +94,42 @@ class DataSlog:
         print self.sb_project_id
         print self.sb_table
 
+    def ChangeDBfromFile(self):
+        self.List = os.listdir(os.getcwd())
+        for item in self.List:
+            if '.table' in item:
+                try:
+                    self.f = open(item)
+                    self.TOC = self.f.read()
+                    self.f.close()
+
+                except:
+                    print "No format or something"
+        self.TOC = self.TOC.split('\n')
+
+        for item in self.TOC:
+            if 'email =' in item:
+                self.temp = item.split(' = ')
+                self.sb_email = self.temp[1]
+            elif 'password =' in item:
+                self.temp = item.split(' = ')
+                self.sb_password = self.temp[1]
+            elif 'project_id =' in item:
+                self.temp = item.split(' = ')
+                self.sb_project_id = self.temp[1]
+            elif 'table =' in item:
+                self.temp = item.split(' = ')
+                self.sb_table = self.temp[1]
+            else:
+                pass
+            
+        
+
 if(__name__ == "__main__"):
     B = LogIntoXML()
     B.ReadFormat()
     B.MakeXML()
     A = DataSlog()
     A.ChangeDB('kimyh@ucla.edu','password','73','MoteGPS')
-    ##A.Burst()
+    A.ChangeDBfromFile()
+    A.Burst()
