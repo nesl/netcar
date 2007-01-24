@@ -42,16 +42,16 @@ $(IPKG_DIR)/.configured: $(IPKG_DIR)/.unpacked
 		--target=$(GNU_TARGET_NAME) \
 		--host=$(GNU_TARGET_NAME) \
 		--build=$(GNU_HOST_NAME) \
-		--prefix=/usr \
-		--exec-prefix=/usr \
-		--bindir=/usr/bin \
-		--sbindir=/usr/sbin \
-		--libexecdir=/usr/lib \
+		--prefix= \
+		--exec-prefix= \
+		--bindir=/bin \
+		--sbindir=/sbin \
+		--libexecdir=/lib \
 		--sysconfdir=/etc \
-		--datadir=/usr/share \
+		--datadir=/share \
 		--localstatedir=/var \
-		--mandir=/usr/man \
-		--infodir=/usr/info \
+		--mandir=/man \
+		--infodir=/info \
 		$(DISABLE_NLS) \
 	);
 	touch $(IPKG_DIR)/.configured
@@ -60,14 +60,14 @@ $(IPKG_DIR)/$(IPKG_BINARY): $(IPKG_DIR)/.configured
 	$(MAKE) CC=$(TARGET_CC) -C $(IPKG_DIR)
 
 $(TARGET_DIR)/$(IPKG_TARGET_BINARY): $(IPKG_DIR)/$(IPKG_BINARY)
-	$(MAKE1) DESTDIR=$(TARGET_DIR)/usr CC=$(TARGET_CC) -C $(IPKG_DIR) install
-	rm -rf $(TARGET_DIR)/usr/share/locale $(TARGET_DIR)/usr/info \
-		$(TARGET_DIR)/usr/man $(TARGET_DIR)/usr/share/doc
+	$(MAKE1) DESTDIR=$(TARGET_DIR) CC=$(TARGET_CC) -C $(IPKG_DIR) install
+	rm -rf $(TARGET_DIR)/share/locale $(TARGET_DIR)/info \
+		$(TARGET_DIR)/man $(TARGET_DIR)/share/doc
 $(IPKG_IPKG_C):
 	install -d -m0755 $(IDIR_IPKG_C)/bin
 	cp -fpR $(IPKG_INSTALL_DIR)/bin/ipkg-cl $(IDIR_IPKG_C)/bin/ipkg
-	install -d -m0755 $(IDIR_IPKG_C)/usr/lib
-	cp -fpR $(IPKG_INSTALL_DIR)/usr/lib/libipkg.so.* $(IDIR_IPKG_C)/usr/lib/
+	install -d -m0755 $(IDIR_IPKG_C)/lib
+	cp -fpR $(IPKG_INSTALL_DIR)/lib/libipkg.so.* $(IDIR_IPKG_C)/lib/
 	$(RSTRIP) $(IDIR_IPKG_C)
 	$(IPKG_BUILD) $(IDIR_IPKG_C) $(PACKAGE_DIR)
 
@@ -76,7 +76,7 @@ ipkg: uclibc $(TARGET_DIR)/$(IPKG_TARGET_BINARY)
 
 ipkg-clean:
 	rm -f  $(TARGET_DIR)/bin/ipkg
-	$(MAKE) DESTDIR=$(TARGET_DIR)/usr CC=$(TARGET_CC) -C $(IPKG_DIR) uninstall
+	$(MAKE) DESTDIR=$(TARGET_DIR) CC=$(TARGET_CC) -C $(IPKG_DIR) uninstall
 	-$(MAKE) -C $(IPKG_DIR) clean
 
 ipkg-dirclean:
