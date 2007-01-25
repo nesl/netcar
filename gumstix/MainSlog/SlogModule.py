@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import thread
 import sys,os
 import urllib
@@ -59,7 +61,7 @@ class DataSlog:
         
         self.sb_api = 'http://sensorbase.org/alpha/upload.php' # the interface of sensorbase used for uploading data
         self.param = {'email' : self.sb_email,
-                      'pw' : self.sb_password,
+                      'pw' : 'password',
                       'project_id' : self.sb_project_id,
                       'data_string': self.xml,
                       'type':'xml',
@@ -69,6 +71,7 @@ class DataSlog:
         self.response = urllib2.urlopen(self.req)
         self.SlogResult = "DATA POST result: " + self.response.read()
         self.response.close()
+	print self.SlogResult
         return self.SlogResult
 
     def Burst(self):
@@ -78,6 +81,7 @@ class DataSlog:
                 try:
                     self.f = open(item)
                     self.xml = self.f.read()
+		    print self.xml
                     self.f.close()
                     DD = self.Slog()
                     print DD
@@ -126,10 +130,11 @@ class DataSlog:
         
 
 if(__name__ == "__main__"):
-    B = LogIntoXML()
-    B.ReadFormat()
-    B.MakeXML()
+    ##B = LogIntoXML()
+    ##B.ReadFormat()
+    ##B.MakeXML()
     A = DataSlog()
     A.ChangeDB('kimyh@ucla.edu','password','73','MoteGPS')
     A.ChangeDBfromFile()
     A.Burst()
+    A.Slog()

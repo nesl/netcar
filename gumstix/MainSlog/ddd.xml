@@ -49,9 +49,9 @@
 		<field name="Longitude">00000.0000,E</field>
 		<field name="Altitude">00.0,M</field>
 		<field name="Geoid">000.0,M</field>
-		<field name="LightLevel">5</field>
-		<field name="Accelx">5</field>
-		<field name="Accely">5</field>
-		<field name="Date">5</field>
+		<field name="LightLevel">6</field>
+		<field name="Accelx">6</field>
+		<field name="Accely">6</field>
+		<field name="Date">6</field>
 	</row>
 </table>
