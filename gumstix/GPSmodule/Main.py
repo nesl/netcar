@@ -1,9 +1,10 @@
 import gps
 import time
 
-gps.GpsThread().start()
+GPS = gps.GpsThread()
+GPS.start()
 
 while 1:
-    print gps.GpsThread().getTime()
+    print GPS.getTime()
     time.sleep(1)
     
