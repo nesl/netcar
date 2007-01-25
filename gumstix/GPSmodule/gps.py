@@ -47,9 +47,9 @@ class GpsThread ( threading.Thread):
 
     def getCoordinates(self):
         self.semaphore.acquire()
-        (long, lat) = (self.__nmea.lat, self.__nmea.lon)
+        (long, lat, alt) = (self.__nmea.lat, self.__nmea.lon, self.__nmea.altitude)
         self.semaphore.release()
-        return (long, lat)
+        return (long, lat, alt)
 
     def getTime(self):
         """ The time is in UTC! """
