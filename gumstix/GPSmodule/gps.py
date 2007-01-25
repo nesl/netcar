@@ -81,7 +81,7 @@ class GpsThread ( threading.Thread):
     def run(self):
         print "in gps run"
         try:
-            gpsdev = file('/dev/ttyS3')
+            gpsdev = open('/dev/ttyS3')
         except :
             print "ERROR: GPS not connected!"
             return
