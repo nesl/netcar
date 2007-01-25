@@ -9,7 +9,7 @@ class LogIntoXML:
         self.rowOPEN = "\t<row>\n"
         self.rowCLOSE = "\t</row>\n"
         self.fieldOPEN = "\t\t<field name=\""
-        self.fieldOPEN2 = "\">\n"
+        self.fieldOPEN2 = "\">"
         self.fieldCLOSE = "</field>\n"
         pass
 
@@ -32,38 +32,40 @@ class LogIntoXML:
         self.XMLstructure = self.ReadFormat()
         for item in self.XMLstructure:
             if 'Altitude' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f" + self.fieldClose % Altitude
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f"%Altitude + self.fieldCLOSE 
             elif 'Latitude' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f" + self.fieldClose % Latitude
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f"%Latitude + self.fieldCLOSE 
             elif 'Longitude' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f" + self.fieldClose % Longitude
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f"%Longitude + self.fieldCLOSE 
             elif 'Precision' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f" + self.fieldClose % Precision
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f"%Precision + self.fieldCLOSE 
             elif 'SatelliteCount' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f" + self.fieldClose % SatelliteCount
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f"%SatelliteCount + self.fieldCLOSE 
             elif 'Speed' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%s" + self.fieldClose % Speed
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%s"%Speed + self.fieldCLOSE 
             elif 'TimeStamp' in item:
-                temp = temp.split(" : ")
+                temp = item.split(" : ")
                 self.TimeConvert = TimeStamp
-                DZ = self.TimeConvert.split
-                DY = DZ[0].split('/')
-                DY = DY[2]+'-'+DY[1]+'-'+DY[0]
-                self.TimeConvert = DY+DZ[1]
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%s" + self.fieldClose % self.TimeConvert  ## DD/MM/YYYY HH:MM:SS(GPS) -> YYYY-MM-DD HH:MM:SS(sensorbase)
+		print self.TimeConvert
+                self.DZ = self.TimeConvert.split()
+		print self.DZ
+                self.DY = self.DZ[0].split('/')
+                self.DY = self.DY[2]+'-'+self.DY[1]+'-'+self.DY[0]
+                self.TimeConvert = self.DY+' '+self.DZ[1]
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%s"%self.TimeConvert + self.fieldCLOSE   ## DD/MM/YYYY HH:MM:SS(GPS) -> YYYY-MM-DD HH:MM:SS(sensorbase)
             elif 'UID' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f" + self.fieldClose % UID
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%d"%UID + self.fieldCLOSE 
             elif 'SID' in item:
-                temp = temp.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%f" + self.fieldClose % SID
-        self.XML = self.XML + self.rowCLOSE + self.fieldCLOSE
+                temp = item.split(" : ")
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%d"%SID + self.fieldCLOSE 
+        self.XML = self.XML + self.rowCLOSE + self.tableCLOSE
         print self.XML
 
 ## Assumption : There is only one type
@@ -73,9 +75,10 @@ if(__name__ == "__main__"):
     GPS.start()
     B = LogIntoXML()
     B.ReadFormat()
-
+    time.sleep(5) ## wait until GPS settles
     while 1:
         (lat,lon,alt) = GPS.getCoordinates()
-        B.MakeXML(alt,lat,lon,GPS.getSatelliteStatistics(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+	print GPS.getSatelliteStatistics()
+        B.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
         time.sleep(5)
     
