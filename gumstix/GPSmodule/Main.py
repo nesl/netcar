@@ -67,11 +67,15 @@ class LogIntoXML:
                 self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%d"%SID + self.fieldCLOSE 
         self.XML = self.XML + self.rowCLOSE + self.tableCLOSE
         print self.XML
+        return self.XML
 
 ## Assumption : There is only one type
 
 if(__name__ == "__main__"):
+    import SlogModule
     GPS = gps.GpsThread()
+    SLOG = SlogModule.DataSlog()
+    SLOG.ChangeDBfromFile()
     GPS.start()
     B = LogIntoXML()
     B.ReadFormat()
@@ -79,6 +83,8 @@ if(__name__ == "__main__"):
     while 1:
         (lat,lon,alt) = GPS.getCoordinates()
 	print GPS.getSatelliteStatistics()
-        B.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+        XML = B.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+        SLOG.ChangeXML(XML)
+        SLOG.Slog()
         time.sleep(5)
     
