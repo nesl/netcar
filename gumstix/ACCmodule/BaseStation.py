@@ -109,8 +109,8 @@ class BaseStation:
                         nodes[src_addr]['seq_nr'] = seq_nr
                         nodes[src_addr]['last_seen'] = time_rx
                         
-                        print d0
-                        print d1
+                        print d0[0]
+                        print d1[0]
                 lastdata = -1
             else:
                 lastdata = data
