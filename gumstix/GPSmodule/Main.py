@@ -72,24 +72,18 @@ class LogIntoXML:
 ## Assumption : There is only one type
 
 if(__name__ == "__main__"):
-    import sensorbase
-    email = 'kimyh@ucla.edu'
-    password = 'password'
-    project_id = '85'
-    table = 'GPS'
+    import SlogModule
     GPS = gps.GpsThread()
+    SLOG = SlogModule.DataSlog()
+    SLOG.ChangeDBfromFile()
     GPS.start()
     B = LogIntoXML()
     B.ReadFormat()
     time.sleep(5) ## wait until GPS settles
     while 1:
-	try:
-	        (lat,lon,alt) = GPS.getCoordinates()
-		print GPS.getSatelliteStatistics()
-	        XML = B.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
-		sensorbase.Slog(email,password,project_id,table,XML)
-	except:
-		print 'asdf'
-	print 'baba'
-        time.sleep(10)
-    
+        (lat,lon,alt) = GPS.getCoordinates()
+	print GPS.getSatelliteStatistics()
+        XML = B.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+        SLOG.ChangeXML(XML)
+        SLOG.Slog()
+        time.sleep(15)

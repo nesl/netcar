@@ -97,6 +97,7 @@ class DataSlog:
     def ChangeDBfromFile(self):
         self.List = os.listdir(os.getcwd())
         for item in self.List:
+	    item = item.strip()
             if '.table' in item:
                 try:
                     self.f = open(item)
