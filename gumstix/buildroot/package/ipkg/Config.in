@@ -21,7 +21,7 @@ config BR2_PACKAGE_IPKG_C
 	 up much less space).
 	 
 config BR2_PACKAGE_IPKG_SH
-	tristate "ipkg-sh - itsy package management system (shell version)"
+	tristate "ipkg-sh - itsy package management system (shell version)(Tentative)"
 	default m if CONFIG_DEVEL
 	default m if BR2_PACKAGE_IMAGEBUILDER
 	select BR2_PACKAGE_IPKG
