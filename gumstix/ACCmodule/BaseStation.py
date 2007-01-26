@@ -26,7 +26,6 @@ class SocketClient:
             self.connected=0
         self.data=""
 
-
     def close(self):
         if(self.connected):
             self.s.shutdown(2)
@@ -41,15 +40,16 @@ class SocketClient:
 
 class BaseStation:
     def __init__(self):
-
         self.sc = SocketClient("127.0.0.1", 7915)
         try:
             thread.start_new_thread(self.input_thread, ())
         except thread.error:
             print error
+	try:
+	    thread.start_new_thread(self.output_thread, ())
+	except thread.error:
+	    print error
 
-        self.output_thread()
-            
         
     def input_thread(self):
         """ currently we don't use the input thread.
@@ -108,9 +108,11 @@ class BaseStation:
 
                         nodes[src_addr]['seq_nr'] = seq_nr
                         nodes[src_addr]['last_seen'] = time_rx
-                        
-                        print d0
-                        print d1
+                       
+			self.d0 = d0
+			self.d1 = d1 
+                        #print d0
+                        #print d1
                 lastdata = -1
             else:
                 lastdata = data
