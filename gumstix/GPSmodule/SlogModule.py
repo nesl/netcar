@@ -123,6 +123,7 @@ class DataSlog:
         TOC = TOC.split('\n')
 
         for item in TOC:
+	    ## This strip removes carriage return
 	    item = item.strip()
             if 'email =' in item:
                 temp = item.split(' = ')
