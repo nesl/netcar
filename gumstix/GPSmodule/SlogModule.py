@@ -50,6 +50,8 @@ class LogIntoXML:
         for item in self.XMLstructure:
             print item
         print self.XMLstructure
+    def ChangeXML(self,XML):
+	self.XML = XML
 
 ## Assumption : There is only one type
 
@@ -69,13 +71,14 @@ class DataSlog:
         
         sb_api = 'http://sensorbase.org/alpha/upload.php' # the interface of sensorbase used for uploading data
         param = {'email' : self.sb_email,
-                      'pw' : 'password',
+                      'pw' : self.sb_password,
                       'project_id' : self.sb_project_id,
                       'data_string': self.xml,
                       'type':'xml',
                       'tableName': self.sb_table}
+	print param
 	signal.signal(signal.SIGALRM, GPRSbroken_handler)
-	signal.alarm(5)
+	signal.alarm(15)
         data = urllib.urlencode(param)
         req = urllib2.Request(sb_api, data)
         response = urllib2.urlopen(req)
@@ -108,6 +111,9 @@ class DataSlog:
         print self.sb_password
         print self.sb_project_id
         print self.sb_table
+
+    def ChangeXML(self,XML):
+	self.xml = XML
 
     def ChangeDBfromFile(self):
         List = os.listdir(os.getcwd())

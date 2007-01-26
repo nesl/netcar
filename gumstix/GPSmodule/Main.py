@@ -86,4 +86,4 @@ if(__name__ == "__main__"):
         XML = B.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
         SLOG.ChangeXML(XML)
         SLOG.Slog()
-        time.sleep(15)
+        time.sleep(240)
