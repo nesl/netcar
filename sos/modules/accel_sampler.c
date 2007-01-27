@@ -4,6 +4,7 @@
 #include <module.h>
 #include <sys_module.h>
 #include <string.h>
+#include <rats/rats.h>
 
 #define LED_DEBUG
 #include <led_dbg.h>
@@ -11,15 +12,21 @@
 #include <mts310sb.h>
 
 #define ACCEL_TEST_APP_TID 0
+#ifdef SOS_SIM
+#define ACCEL_TEST_APP_INTERVAL 50
+#else
 #define ACCEL_TEST_APP_INTERVAL 20
+#endif
 
 #define ACCEL_TEST_PID DFLT_APP_ID0
 
-#define UART_MSG_LEN 3
-
 #define SAMPLES_PER_MSG 20
 
-#define MSG_ACCEL_DATA 41
+#define MSG_ACCEL_DATA (MOD_MSG_START + 1)
+#define ROOT_ID 0
+//the following message is used for the RATS reply
+#define MSG_REPLY (MOD_MSG_START + 0)
+
 
 enum {
 	ACCEL_TEST_APP_INIT=0,
@@ -34,13 +41,13 @@ typedef struct {
 	uint8_t pid;
 	uint8_t state;
 	uint8_t sample_nr;
-	uint8_t seq_nr;
+	uint32_t seq_nr;
 	uint16_t accel0[SAMPLES_PER_MSG];
 	uint16_t accel1[SAMPLES_PER_MSG];
 } app_state_t;
 
 typedef struct {
-	uint8_t seq_nr;
+	uint32_t seq_nr;
 	uint16_t accel0[SAMPLES_PER_MSG];
 	uint16_t accel1[SAMPLES_PER_MSG];
 } accel_msg_t;
@@ -75,10 +82,15 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			ker_timer_init(s->pid, ACCEL_TEST_APP_TID, TIMER_REPEAT);
 			ker_timer_start(s->pid, ACCEL_TEST_APP_TID, ACCEL_TEST_APP_INTERVAL);
 			ker_sensor_enable(s->pid, MTS310_ACCEL_0_SID);
+			//we need to start the time synchronisation process with the root id node
+			if(ker_id() != ROOT_ID){
+				post_short(RATS_TIMESYNC_PID, s->pid, MSG_RATS_CLIENT_START, 1, ROOT_ID, 0);
+			}
 			break;
 
 		case MSG_FINAL:
 			ker_sensor_disable(s->pid, MTS310_ACCEL_0_SID);
+			post_short(RATS_TIMESYNC_PID, s->pid, MSG_RATS_CLIENT_STOP, 0, ROOT_ID, 0);
 			break;
 
 		case MSG_TIMER_TIMEOUT:
@@ -94,9 +106,12 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 					break;
 					
 				case ACCEL_TEST_APP_ACCEL_0:
-					LED_DBG(LED_YELLOW_TOGGLE);
+					//LED_DBG(LED_YELLOW_TOGGLE);
 					s->state = ACCEL_TEST_APP_ACCEL_0_BUSY;
 					ker_sensor_get_data(s->pid, MTS310_ACCEL_0_SID);
+#ifdef SOS_SIM
+					post_short(s->pid, s->pid, MSG_DATA_READY, 0, 0xaaaa, 0);
+#endif
 					break;
 					
 				case ACCEL_TEST_APP_ACCEL_1:
@@ -131,6 +146,9 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 					}
 					s->state = ACCEL_TEST_APP_ACCEL_1_BUSY;
 					ker_sensor_get_data(s->pid, MTS310_ACCEL_1_SID);		
+#ifdef SOS_SIM
+          post_short(s->pid, s->pid, MSG_DATA_READY, 0, 0xaaaa, 0);
+#endif
 					break;
 
 				case ACCEL_TEST_APP_ACCEL_1_BUSY:
@@ -142,44 +160,26 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 					}
 					s->sample_nr++;
 					if(s->sample_nr >= SAMPLES_PER_MSG){
-						//we collected enough samples, send out a message
-						accel_msg_t *data_msg;
-					
-						s->sample_nr = 0;
-
-						data_msg = (accel_msg_t*)sys_malloc (sizeof(accel_msg_t));
-
-						//we specifically don't check for an overflow since we want to start at 0 again.
-						data_msg->seq_nr = s->seq_nr++;
-
-						
-						if ( data_msg ) {
-							memcpy((void*)data_msg->accel0, (void*)s->accel0, SAMPLES_PER_MSG*sizeof(uint16_t));
-							memcpy((void*)data_msg->accel1, (void*)s->accel1, SAMPLES_PER_MSG*sizeof(uint16_t));
-							if(ker_id() == 0){
-								LED_DBG(LED_GREEN_TOGGLE);
-								sys_post_uart ( s->pid,
-																MSG_ACCEL_DATA,
-																sizeof(accel_msg_t),
-																data_msg,
-																SOS_MSG_RELEASE,
-																BCAST_ADDRESS);
-							} else {
-								sys_post_net ( s->pid,
-															 MSG_ACCEL_DATA,
-															 sizeof(accel_msg_t),
-															 data_msg,
-															 SOS_MSG_RELEASE,
-															 BCAST_ADDRESS);
-							}
+						//we collected enough samples, get the current time
+						rats_t *rats_ptr = (rats_t *)sys_malloc(sizeof(rats_t));
+						rats_ptr->mod_id = s->pid;
+						rats_ptr->source_node_id = ker_id();
+						rats_ptr->target_node_id = ROOT_ID;
+						rats_ptr->time_at_source_node = ker_systime32();
+						rats_ptr->msg_type = MSG_REPLY;
+						if(ker_id() == ROOT_ID){
+							// don't use rats for the sync. Generate the message ourself	
+							rats_ptr->time_at_target_node = rats_ptr->time_at_source_node;
+							post_long(s->pid, s->pid, MSG_REPLY, sizeof(rats_t), rats_ptr, SOS_MSG_RELEASE);
 						} else {
-							LED_DBG(LED_RED_TOGGLE);
+							post_long(RATS_TIMESYNC_PID, s->pid, MSG_RATS_GET_TIME, sizeof(rats_t), rats_ptr, SOS_MSG_RELEASE);
 						}
+					} else {
+						// We are not done yet. Sample the next sensor.
+						s->state = ACCEL_TEST_APP_ACCEL_0;
 					}
-
-					s->state = ACCEL_TEST_APP_ACCEL_0;
 					break;
-
+				
 				default:
 					LED_DBG(LED_RED_TOGGLE);
 					s->state = ACCEL_TEST_APP_INIT;
@@ -189,6 +189,48 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			}
 			break;
 
+	case MSG_REPLY:
+		{
+			// we received the current time from RATS. Now we can send out the message.
+			accel_msg_t *data_msg;
+			rats_t *rats_ptr = (rats_t *)msg->data;
+
+			s->sample_nr = 0;
+			
+			data_msg = (accel_msg_t*)sys_malloc (sizeof(accel_msg_t));
+			
+			//we specifically don't check for an overflow since we want to start at 0 again.
+			data_msg->seq_nr = rats_ptr->time_at_target_node;
+			DEBUG("Sending packet with time %d\n", rats_ptr->time_at_target_node);			
+			
+			if ( data_msg ) {
+				memcpy((void*)data_msg->accel0, (void*)s->accel0, SAMPLES_PER_MSG*sizeof(uint16_t));
+				memcpy((void*)data_msg->accel1, (void*)s->accel1, SAMPLES_PER_MSG*sizeof(uint16_t));
+				LED_DBG(LED_YELLOW_TOGGLE);
+				if(ker_id() == 0){
+					sys_post_uart ( s->pid,
+													MSG_ACCEL_DATA,
+													sizeof(accel_msg_t),
+													data_msg,
+													SOS_MSG_RELEASE,
+													BCAST_ADDRESS);
+				} else {
+					sys_post_net ( s->pid,
+												 MSG_ACCEL_DATA,
+												 sizeof(accel_msg_t),
+												 data_msg,
+												 SOS_MSG_RELEASE,
+												 BCAST_ADDRESS);
+				}
+			} else {
+				LED_DBG(LED_RED_TOGGLE);
+			}
+			rats_ptr = NULL; //otherwise it won't compile for mica2 (rats_ptr would be unused) FIXME: why is that so?
+		
+		
+			s->state = ACCEL_TEST_APP_ACCEL_0;
+			break;
+		}
 			/*	
   case MSG_ACCEL_DATA:
 		if(ker_id() == 0) {

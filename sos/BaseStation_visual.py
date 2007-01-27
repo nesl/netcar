@@ -10,7 +10,7 @@ import wx.lib.plot as plot
 
 ACCELEROMETER_MODULE = 0x80
 
-ACCELEROMETER_DATA = 41
+ACCELEROMETER_DATA = 33
 
 SAMPLES_PER_MSG = 20
 SAMPLE_RATE = 50
@@ -39,7 +39,7 @@ class SocketClient:
     def __init__(self, host,port):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connected=1
-        
+
         try:
             self.s.connect((host, port))
         except socket.error:
@@ -70,7 +70,7 @@ class BaseStation(wx.Frame):
         self.index = 0
         self.d0 = {}
         self.d1 = {}
-        
+
         EVT_RESULT(self,self.OnResult)
 
         self.sc = SocketClient("127.0.0.1", 7915)
@@ -83,7 +83,7 @@ class BaseStation(wx.Frame):
             thread.start_new_thread(self.output_thread, ())
         except thread.error:
             print error
-        
+
 
     def OnResult(self, event):
 
@@ -107,14 +107,14 @@ class BaseStation(wx.Frame):
         gc = plot.PlotGraphics(lines, 'Accelerations', 'Time [s]', 'Acceleration 10bit')
         # the X axis shows the last 500 samples
         self.client.Draw(gc, xAxis= (self.d0[src_addr][max(-500, -len(self.d0[src_addr]))][0], self.d0[src_addr][-1][0]), yAxis= (0,1024))
-        
-            
-        
+
+
+
     def input_thread(self):
         """ currently we don't use the input thread.
         """
         pass
-    
+
     def output_thread(self):
         lastdata = -1
         nodes = {}
@@ -132,7 +132,16 @@ class BaseStation(wx.Frame):
                     print "bad msg header:", map(ord, s)
                 #print src_mod, dst_addr, src_addr, msg_type, msg_length
                 if msg_type == ACCELEROMETER_DATA:
-                    seq_nr = ord(self.sc.s.recv(1))
+                    try:
+                        s = self.sc.s.recv(4)
+                        # remove the 4 time bytes from the message length
+                        msg_length -= 4
+                        (time_rx, ) = struct.unpack("<L", s)
+                        time_rx /= 115200.0
+                    except struct.error:
+                        print struct.error
+                        print "bad string for time:", map(ord, s)
+                    
                     try:
                         s = self.sc.s.recv(SAMPLES_PER_MSG*2)
                         accel0 = struct.unpack("<"+msg_length/4*'H', s)
@@ -145,49 +154,42 @@ class BaseStation(wx.Frame):
                     except struct.error:
                         print struct.error
                         print "bad string for accel1:", map(ord, s)
-                        
+
                     #try to find out the sample times
                     if src_addr not in nodes.keys():
                         #never seen the node before.
-                        nodes[src_addr] = {'seq_nr': seq_nr, 'last_seen': time_rx, 'file': open(str(src_addr)+".log", 'w')}
-                        
+                        nodes[src_addr] = {'last_seen': time_rx, 'file': open(str(src_addr)+".log", 'w')}
+
                     else:
                         d0 = []
                         d1 = []
 
-                        if seq_nr != (nodes[src_addr]['seq_nr'] + 1)%256:
-                            #we missed messages. maybe we should compensate for them?
-                            #for i in range(
-                            print "Missed %d messages"%(seq_nr - nodes[src_addr]['seq_nr'], )
-
                         # correlate the samples with time
                         # FIXME: this is only an estimate based on the reception time of the sample.
                         for i in range(len(accel0)):
-                            t = time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE) - start_time
+                            t = time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE)
                             d0.append((t, accel0[i]))
                             d1.append((t, accel1[i]))
                             nodes[src_addr]['file'].write('%f\t%d\t%d\n'%(time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel0[i], accel1[i]))
 
-                        nodes[src_addr]['seq_nr'] = seq_nr
                         nodes[src_addr]['last_seen'] = time_rx
                         wx.PostEvent(self, ResultEvent({'src_addr': src_addr, 'accel0': d0, 'accel1': d1}))
 
-                    #print seq_nr
                     #print accel0
                     #print accel1
                 lastdata = -1
             else:
                 lastdata = data
 
-        
+
 class MyApp(wx.App):
     def OnInit(self):
         frame = BaseStation(None, -1, 'Plotting')
         frame.Show(True)
         self.SetTopWindow(frame)
-        
+
         return True
-    
+
 if(__name__ == "__main__"):
 
     app = MyApp(0)
