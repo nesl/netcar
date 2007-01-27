@@ -17,6 +17,10 @@ SAMPLE_RATE = 50
 
 EVT_RESULT_ID = wx.NewId()
 
+ID_CONNECT = 101
+ID_EXIT = 110
+ID_PLOT = 102
+
 collist = ['green',
            'red',
            'blue',
@@ -63,6 +67,22 @@ class BaseStation(wx.Frame):
     def __init__(self, parent, id, title):
         wx.Frame.__init__(self, parent, id, title, size=(180, 280))
 
+        # Setting up the menu
+        filemenu = wx.Menu()
+        filemenu.Append(ID_CONNECT, "&Connect", " Connect to a live stream of data")
+        filemenu.Append(ID_PLOT, "&Plot", " Plot an existing stream of data from a file")
+        filemenu.AppendSeparator()
+        filemenu.Append(ID_EXIT,"E&xit", " Terminate the program")
+        # Creating the menubar
+        menuBar = wx.MenuBar()
+        menuBar.Append(filemenu, "&Menu") # Adding the "filemenu" to menubar
+        self.SetMenuBar(menuBar) # Adding menubar to the frame content
+
+        #Sending events on "Connect" "Plot" and "Exit"
+        wx.EVT_MENU(self, ID_CONNECT, self.OnConnect)
+        wx.EVT_MENU(self, ID_EXIT, self.OnExit)
+        wx.EVT_MENU(self, ID_PLOT, self.OnPlot)
+
         self.client = plot.PlotCanvas(self)
         self.client.SetEnableLegend(True)
         self.Show(True)
@@ -73,6 +93,12 @@ class BaseStation(wx.Frame):
 
         EVT_RESULT(self,self.OnResult)
 
+    # Handlers for events on "Connect" "Plot" and "Exit"
+    def OnConnect(self, e):
+        d = wx.MessageDialog(self, "Hit Connect"
+                             " in python", "blah", wx.OK)
+        d.ShowModal()
+        d.Destroy()
         self.sc = SocketClient("127.0.0.1", 7915)
         try:
             thread.start_new_thread(self.input_thread, ())
@@ -83,7 +109,14 @@ class BaseStation(wx.Frame):
             thread.start_new_thread(self.output_thread, ())
         except thread.error:
             print error
+    def OnPlot(self, e):
+        d = wx.MessageDialog(self, "Hit Plot"
+                             " in python", "blah", wx.OK)
+        d.ShowModal()
+        d.Destroy()
 
+    def OnExit(self, e):
+        self.Close(True)
 
     def OnResult(self, event):
 
