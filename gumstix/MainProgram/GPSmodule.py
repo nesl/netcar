@@ -5,7 +5,7 @@ import Queue
 import thread
 
 ## Each Module has a Queue in it.
-GPSqueue = Queue.Queue(20)
+GPSXMLqueue = Queue.Queue(20)
 
 
 class GPSmodule:
@@ -85,7 +85,7 @@ class GPSmodule:
             XML = self.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
 	    print XML
             try:
-                GPSqueue.put(XML,True,0.5)
+                GPSXMLqueue.put(XML,True,0.5)
             except:
                 print "You're missing GPS data"
             time.sleep(1)
@@ -96,6 +96,6 @@ if(__name__ == "__main__"):
     Dummy = GPSmodule()
     time.sleep(5)
     while True:
-        print GPSqueue.get()
+        print GPSXMLqueue.get()
         time.sleep(0.1)
     
