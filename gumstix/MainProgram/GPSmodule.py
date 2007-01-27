@@ -81,19 +81,21 @@ class GPSmodule:
         time.sleep(5) ## wait until GPS settles
         while 1:
             (lat,lon,alt) = GPS.getCoordinates()
-            print GPS.getSatelliteStatistics()
+            print GPS.getTime()
             XML = self.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+	    print XML
             try:
                 GPSqueue.put(XML,True,0.5)
             except:
                 print "You're missing GPS data"
             time.sleep(1)
+
 ## Assumption : There is only one type
 
 if(__name__ == "__main__"):
     Dummy = GPSmodule()
     time.sleep(5)
     while True:
-        print GPSQueue.get()
+        print GPSqueue.get()
         time.sleep(0.1)
     

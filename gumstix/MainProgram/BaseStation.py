@@ -113,7 +113,7 @@ class BaseStation:
                         nodes[src_addr]['last_seen'] = time_rx
 
                         try:
-                            AccelQueue.push((d0,d1),True,1)
+                            AccelQueue.put((d0,d1),True,1)
                         except:
                             print "You are losing Accel data"
 			self.d0 = d0
@@ -126,6 +126,8 @@ class BaseStation:
 
         
 if(__name__ == "__main__"):
-
-    BaseStation()
-
+    DD = BaseStation()
+    time.sleep(1)
+    while True:
+	print AccelQueue.get()
+	time.sleep(0.1)

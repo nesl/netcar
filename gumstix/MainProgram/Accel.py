@@ -3,12 +3,13 @@ import Queue
 import time
 import os
 import Queue
+import thread
 
 ## Accel->XML->put queue
 
 AccXMLQueue = Queue.Queue(20)
 
-class AccXMLQueue:
+class AccXMLPut:
     def __init__(self):
         self.tableOPEN = "<table>\n"
         self.tableCLOSE = "</table>\n"
@@ -47,7 +48,7 @@ class AccXMLQueue:
 	self.XML = self.XML + self.tableCLOSE
 	print self.XML
 	try:
-            AccXMLQueue.put(self.XML,True,0.1)
+            AccXMLQueue.put(self.XML,True,1)
         except:
             print "You are losing ACC XML DATA"
 
@@ -84,10 +85,13 @@ class AccXMLQueue:
         Acc.BaseStation()
         while True:
             Temp = Acc.AccelQueue.get()
-            self.MakeXML(temp[0],temp[1],temp[0])
+            self.MakeXML(Temp[0],Temp[1],Temp[0])
         
         
     
 if(__name__ == "__main__"):
-    DD = AccXMLQueue
+    DD = AccXMLPut()
     DD.RunAccXML()
+    while True:
+	print AccXMLQueue.get()
+
