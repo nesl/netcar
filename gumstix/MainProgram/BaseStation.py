@@ -5,7 +5,7 @@ import socket
 import sys
 import struct
 import time
-
+import Queue
 
 ACCELEROMETER_MODULE = 0x80
 
@@ -13,6 +13,9 @@ ACCELEROMETER_DATA = 41
 
 SAMPLES_PER_MSG = 20
 SAMPLE_RATE = 50
+
+AccelQueue = Queue.Queue(20)
+
 
 class SocketClient:
     """ """
@@ -108,9 +111,13 @@ class BaseStation:
 
                         nodes[src_addr]['seq_nr'] = seq_nr
                         nodes[src_addr]['last_seen'] = time_rx
-                       
-						self.d0 = d0
-						self.d1 = d1 
+
+                        try:
+                            AccelQueue.push((d0,d1),True,1)
+                        except:
+                            print "You are losing Accel data"
+			self.d0 = d0
+    			self.d1 = d1 
                         #print d0
                         #print d1
                 lastdata = -1
