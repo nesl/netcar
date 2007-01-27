@@ -58,9 +58,9 @@ class GPSmodule:
             elif 'TimeStamp' in item:
                 temp = item.split(" : ")
                 self.TimeConvert = TimeStamp
-		print self.TimeConvert
+		#print self.TimeConvert
                 self.DZ = self.TimeConvert.split()
-		print self.DZ
+		#print self.DZ
                 self.DY = self.DZ[0].split('/')
                 self.DY = self.DY[2]+'-'+self.DY[1]+'-'+self.DY[0]
                 self.TimeConvert = self.DY+' '+self.DZ[1]
@@ -72,7 +72,7 @@ class GPSmodule:
                 temp = item.split(" : ")
                 self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%d"%SID + self.fieldCLOSE 
         self.XML = self.XML + self.rowCLOSE + self.tableCLOSE
-        print self.XML
+        #print self.XML
         return self.XML
 
     def runGPS(self):
@@ -81,9 +81,9 @@ class GPSmodule:
         time.sleep(5) ## wait until GPS settles
         while 1:
             (lat,lon,alt) = GPS.getCoordinates()
-            print GPS.getTime()
+            #print GPS.getTime()
             XML = self.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
-	    print XML
+	    #print XML
             try:
                 GPSXMLqueue.put(XML,True,0.5)
             except:

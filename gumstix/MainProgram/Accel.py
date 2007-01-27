@@ -46,7 +46,7 @@ class AccXMLPut:
 		Z = AccZ[index]
 		self.XML = self.XML + self.MakeROW(item[1],Y[1],Z[1],item[0],1,1)
 	self.XML = self.XML + self.tableCLOSE
-	print self.XML
+	#print self.XML
 	try:
             AccXMLQueue.put(self.XML,True,1)
         except:
@@ -77,7 +77,7 @@ class AccXMLPut:
                 temp = item.split(" : ")
                 self.ROW = self.ROW + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%d"%SID + self.fieldCLOSE 
         self.ROW = self.ROW + self.rowCLOSE
-        print self.ROW
+        #print self.ROW
         return self.ROW
 
     def RunAccXML(self):
