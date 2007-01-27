@@ -1,0 +1,5 @@
+#!/bin/sh
+/home/sossrv.exe -s /dev/ttyS0 &
+pppd call gprs &
+sleep 20
+/home/MainProgram/MainProg.py
