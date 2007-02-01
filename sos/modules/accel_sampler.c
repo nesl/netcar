@@ -9,13 +9,13 @@
 #define LED_DEBUG
 #include <led_dbg.h>
 
-#include <mts310sb.h>
+#include <h34c.h>
 
 #define ACCEL_TEST_APP_TID 0
 #ifdef SOS_SIM
 #define ACCEL_TEST_APP_INTERVAL 50
 #else
-#define ACCEL_TEST_APP_INTERVAL 20
+#define ACCEL_TEST_APP_INTERVAL 10
 #endif
 
 #define ACCEL_TEST_PID DFLT_APP_ID0
@@ -35,6 +35,8 @@ enum {
 	ACCEL_TEST_APP_ACCEL_0_BUSY,
 	ACCEL_TEST_APP_ACCEL_1,
 	ACCEL_TEST_APP_ACCEL_1_BUSY,
+	ACCEL_TEST_APP_ACCEL_2,
+	ACCEL_TEST_APP_ACCEL_2_BUSY,
 };
 
 typedef struct {
@@ -44,12 +46,14 @@ typedef struct {
 	uint32_t seq_nr;
 	uint16_t accel0[SAMPLES_PER_MSG];
 	uint16_t accel1[SAMPLES_PER_MSG];
+	uint16_t accel2[SAMPLES_PER_MSG];
 } app_state_t;
 
 typedef struct {
 	uint32_t seq_nr;
 	uint16_t accel0[SAMPLES_PER_MSG];
 	uint16_t accel1[SAMPLES_PER_MSG];
+	uint16_t accel2[SAMPLES_PER_MSG];
 } accel_msg_t;
 
 static int8_t accel_test_msg_handler(void *state, Message *msg);
@@ -81,7 +85,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			//allocate the space for the accelerometers
 			ker_timer_init(s->pid, ACCEL_TEST_APP_TID, TIMER_REPEAT);
 			ker_timer_start(s->pid, ACCEL_TEST_APP_TID, ACCEL_TEST_APP_INTERVAL);
-			ker_sensor_enable(s->pid, MTS310_ACCEL_0_SID);
+			ker_sensor_enable(s->pid, H34C_ACCEL_0_SID);
 			//we need to start the time synchronisation process with the root id node
 			if(ker_id() != ROOT_ID){
 				post_short(RATS_TIMESYNC_PID, s->pid, MSG_RATS_CLIENT_START, 1, ROOT_ID, 0);
@@ -89,7 +93,8 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			break;
 
 		case MSG_FINAL:
-			ker_sensor_disable(s->pid, MTS310_ACCEL_0_SID);
+			ker_sensor_disable(s->pid, H34C_ACCEL_0_SID);
+			ker_timer_stop(s->pid, ACCEL_TEST_APP_TID);
 			post_short(RATS_TIMESYNC_PID, s->pid, MSG_RATS_CLIENT_STOP, 0, ROOT_ID, 0);
 			break;
 
@@ -108,7 +113,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 				case ACCEL_TEST_APP_ACCEL_0:
 					//LED_DBG(LED_YELLOW_TOGGLE);
 					s->state = ACCEL_TEST_APP_ACCEL_0_BUSY;
-					ker_sensor_get_data(s->pid, MTS310_ACCEL_0_SID);
+					ker_sensor_get_data(s->pid, H34C_ACCEL_0_SID);
 #ifdef SOS_SIM
 					post_short(s->pid, s->pid, MSG_DATA_READY, 0, 0xaaaa, 0);
 #endif
@@ -120,6 +125,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 					//ignore the sampling if we are still busy
 				case ACCEL_TEST_APP_ACCEL_0_BUSY:
 				case ACCEL_TEST_APP_ACCEL_1_BUSY:
+				case ACCEL_TEST_APP_ACCEL_2_BUSY:
 					LED_DBG(LED_GREEN_TOGGLE);
 					break;
 
@@ -137,24 +143,38 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 				m = (MsgParam*)msg->data;
 
 				switch(s->state) {
-				case ACCEL_TEST_APP_ACCEL_0_BUSY:
-					// first accel sampled, sample next one
-					if(s->sample_nr < SAMPLES_PER_MSG) {
-						s->accel0[s->sample_nr] = m->word;
-					} else {
-						LED_DBG(LED_RED_TOGGLE);
-					}
-					s->state = ACCEL_TEST_APP_ACCEL_1_BUSY;
-					ker_sensor_get_data(s->pid, MTS310_ACCEL_1_SID);		
+					case ACCEL_TEST_APP_ACCEL_0_BUSY:
+						// first accel sampled, sample next one
+						if(s->sample_nr < SAMPLES_PER_MSG) {
+							s->accel0[s->sample_nr] = m->word;
+						} else {
+							LED_DBG(LED_RED_TOGGLE);
+						}
+						s->state = ACCEL_TEST_APP_ACCEL_1_BUSY;
+						ker_sensor_get_data(s->pid, H34C_ACCEL_1_SID);		
 #ifdef SOS_SIM
-          post_short(s->pid, s->pid, MSG_DATA_READY, 0, 0xaaaa, 0);
+						post_short(s->pid, s->pid, MSG_DATA_READY, 0, 0xaaaa, 0);
 #endif
-					break;
+						break;
 
-				case ACCEL_TEST_APP_ACCEL_1_BUSY:
+					case ACCEL_TEST_APP_ACCEL_1_BUSY:
+						// first accel sampled, sample next one
+						if(s->sample_nr < SAMPLES_PER_MSG) {
+							s->accel1[s->sample_nr] = m->word;
+						} else {
+							LED_DBG(LED_RED_TOGGLE);
+						}
+						s->state = ACCEL_TEST_APP_ACCEL_2_BUSY;
+						ker_sensor_get_data(s->pid, H34C_ACCEL_2_SID);		
+#ifdef SOS_SIM
+						post_short(s->pid, s->pid, MSG_DATA_READY, 0, 0xaaaa, 0);
+#endif
+						break;
+
+				case ACCEL_TEST_APP_ACCEL_2_BUSY:
 					// second accel sampled, wait for timeout and go back to accel 0
 					if(s->sample_nr < SAMPLES_PER_MSG) {
-						s->accel1[s->sample_nr] = m->word;
+						s->accel2[s->sample_nr] = m->word;
 					} else {
 						LED_DBG(LED_RED_TOGGLE);
 					}
@@ -206,6 +226,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 			if ( data_msg ) {
 				memcpy((void*)data_msg->accel0, (void*)s->accel0, SAMPLES_PER_MSG*sizeof(uint16_t));
 				memcpy((void*)data_msg->accel1, (void*)s->accel1, SAMPLES_PER_MSG*sizeof(uint16_t));
+				memcpy((void*)data_msg->accel2, (void*)s->accel2, SAMPLES_PER_MSG*sizeof(uint16_t));
 				LED_DBG(LED_YELLOW_TOGGLE);
 				if(ker_id() == 0){
 					sys_post_uart ( s->pid,
