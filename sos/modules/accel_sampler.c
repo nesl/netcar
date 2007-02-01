@@ -15,12 +15,12 @@
 #ifdef SOS_SIM
 #define ACCEL_TEST_APP_INTERVAL 50
 #else
-#define ACCEL_TEST_APP_INTERVAL 10
+#define ACCEL_TEST_APP_INTERVAL 20
 #endif
 
 #define ACCEL_TEST_PID DFLT_APP_ID0
 
-#define SAMPLES_PER_MSG 20
+#define SAMPLES_PER_MSG 10
 
 #define MSG_ACCEL_DATA (MOD_MSG_START + 1)
 #define ROOT_ID 0
@@ -273,7 +273,7 @@ static int8_t accel_test_msg_handler(void *state, Message *msg)
 	return SOS_OK;
 }
 
-mod_header_ptr accel_test_app_get_header() {
+mod_header_ptr accel_sampler_get_header() {
 	return sos_get_header_address(mod_header);
 }
 

@@ -24,7 +24,9 @@ ID_PLOT = 102
 collist = ['green',
            'red',
            'blue',
-           'cyan']
+           'cyan',
+	   'black',
+	   'yellow']
 
 def EVT_RESULT(win, func):
     """Define Result Event."""
@@ -135,9 +137,9 @@ class BaseStation(wx.Frame):
         lines = []
         i=0
         for src_addr in self.d0.keys():
-            lines.append(plot.PolyLine(self.d0[src_addr], legend=str(src_addr)+' accel0', colour=collist[i], width=1))
-            lines.append(plot.PolyLine(self.d1[src_addr], legend=str(src_addr)+' accel1', colour=collist[i+1], width=1))
-            lines.append(plot.PolyLine(self.d2[src_addr], legend=str(src_addr)+' accel2', colour=collist[i+2], width=1))
+            lines.append(plot.PolyLine(self.d0[src_addr], legend=str(src_addr)+' accel0', colour=collist[3*i], width=1))
+            lines.append(plot.PolyLine(self.d1[src_addr], legend=str(src_addr)+' accel1', colour=collist[3*i+1], width=1))
+            lines.append(plot.PolyLine(self.d2[src_addr], legend=str(src_addr)+' accel2', colour=collist[3*i+2], width=1))
             i += 1
         gc = plot.PlotGraphics(lines, 'Accelerations', 'Time [s]', 'Acceleration 10bit')
         # the X axis shows the last 500 samples
