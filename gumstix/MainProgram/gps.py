@@ -7,6 +7,7 @@
 
 import socket, string
 import os, sys
+sys.path.append("/home/MainProgram")
 from LatLongUTMconversion import LLtoUTM
 import NMEA
 import threading

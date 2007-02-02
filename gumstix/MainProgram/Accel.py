@@ -1,3 +1,5 @@
+import sys
+sys.path.append("/home/MainProgram")
 import BaseStation
 import Queue
 import time

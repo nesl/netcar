@@ -1,3 +1,5 @@
+import sys
+sys.path.append("/home/MainProgram")
 import gps
 import time
 import os
