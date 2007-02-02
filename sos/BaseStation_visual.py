@@ -85,8 +85,23 @@ class BaseStation(wx.Frame):
         wx.EVT_MENU(self, ID_EXIT, self.OnExit)
         wx.EVT_MENU(self, ID_PLOT, self.OnPlot)
 
-        self.client = plot.PlotCanvas(self)
-        self.client.SetEnableLegend(True)
+        sizer = wx.GridSizer(4, 1);
+
+        self.SetSizer(sizer)
+
+        self.panel1 = wx.Panel(self)
+
+        self.graphs = []
+
+        self.graphs.append(plot.PlotCanvas(self))
+        self.graphs.append(plot.PlotCanvas(self))
+        self.graphs.append(plot.PlotCanvas(self))
+        self.graphs.append(plot.PlotCanvas(self))
+        for g in self.graphs:
+            g.SetEnableLegend(True)
+
+            sizer.Add(g, 0, wx.EXPAND )
+
         self.Show(True)
 
         self.index = 0
@@ -134,16 +149,19 @@ class BaseStation(wx.Frame):
         self.d0[src_addr][0:max(-600, -len(self.d0[src_addr]))] = []
         self.d1[src_addr][0:max(-600, -len(self.d1[src_addr]))] = []
         self.d2[src_addr][0:max(-600, -len(self.d2[src_addr]))] = []
-        lines = []
+        if src_addr != 0:
+            return
+        lines = [[], [], [], []]
         i=0
         for src_addr in self.d0.keys():
-            lines.append(plot.PolyLine(self.d0[src_addr], legend=str(src_addr)+' accel0', colour=collist[3*i], width=1))
-            lines.append(plot.PolyLine(self.d1[src_addr], legend=str(src_addr)+' accel1', colour=collist[3*i+1], width=1))
-            lines.append(plot.PolyLine(self.d2[src_addr], legend=str(src_addr)+' accel2', colour=collist[3*i+2], width=1))
+            lines[0].append(plot.PolyLine(self.d0[src_addr], legend=str(src_addr)+' accel0', colour=collist[i], width=1))
+            lines[1].append(plot.PolyLine(self.d1[src_addr], legend=str(src_addr)+' accel1', colour=collist[i], width=1))
+            lines[2].append(plot.PolyLine(self.d2[src_addr], legend=str(src_addr)+' accel2', colour=collist[i], width=1))
             i += 1
-        gc = plot.PlotGraphics(lines, 'Accelerations', 'Time [s]', 'Acceleration 10bit')
+        for i in range(len(self.graphs)-1):
+            gc = plot.PlotGraphics(lines[i], 'Accelerations', 'Time [s]', 'Acceleration')
         # the X axis shows the last 500 samples
-        self.client.Draw(gc, xAxis= (self.d0[src_addr][max(-500, -len(self.d0[src_addr]))][0], self.d0[src_addr][-1][0]), yAxis= (0,1024))
+            self.graphs[i].Draw(gc, xAxis= (self.d0[src_addr][max(-500, -len(self.d0[src_addr]))][0], self.d0[src_addr][-1][0]), yAxis= (0, 1024))
 
 
 
@@ -182,6 +200,7 @@ class BaseStation(wx.Frame):
                     try:
                         s = self.sc.s.recv(SAMPLES_PER_MSG*2)
                         accel0 = struct.unpack("<"+SAMPLES_PER_MSG*'H', s)
+
                     except struct.error:
                         print struct.error
                         print "bad string for accel0:", map(ord, s)
@@ -226,7 +245,6 @@ class BaseStation(wx.Frame):
                 lastdata = -1
             else:
                 lastdata = data
-
 
 class MyApp(wx.App):
     def OnInit(self):
