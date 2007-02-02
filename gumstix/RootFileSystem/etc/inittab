@@ -39,6 +39,7 @@ null::respawn:/sbin/klogd -n
 null::respawn:/root/keepalive
 
 #running Application
+::wait:/bin/sleep 30
 ::respawn:/home/MainProgram/RUN
 #::wait:/root/ddd.py
 
