@@ -35,7 +35,7 @@ class GPSmodule:
         return self.format
 
     def MakeXML(self, Altitude, Latitude, Longitude, Precision, SatelliteCount, Speed, TimeStamp, UID, SID):
-        self.XML = self.tableOPEN
+	self.XML = self.tableOPEN
         self.XML = self.XML + self.rowOPEN
         self.XMLstructure = self.ReadFormat()
         for item in self.XMLstructure:
@@ -84,7 +84,10 @@ class GPSmodule:
         while 1:
             (lat,lon,alt) = GPS.getCoordinates()
             #print GPS.getTime()
-            XML = self.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+	    try: 
+            	XML = self.MakeXML(alt,lat,lon,10, GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+	    except:
+		print "GPS is not valid"
 	    #print XML
             try:
                 GPSXMLqueue.put(XML,True,0.5)

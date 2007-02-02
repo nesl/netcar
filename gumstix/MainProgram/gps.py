@@ -89,8 +89,11 @@ class GpsThread ( threading.Thread):
 
 
         while self.running:
-            line = gpsdev.readline()
-            self.gpsInput(line)
+	    try:
+           	 line = gpsdev.readline()
+    	         self.gpsInput(line)
+	    except:
+		 print "Strange GPS data"
 	    #print self.getCoordinates()
 
             #print nmea.lat, nmea.lon, (nmea.speedunits % (nmea.speed * nmea.speedmultiplier))
