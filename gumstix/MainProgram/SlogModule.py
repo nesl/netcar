@@ -31,6 +31,11 @@ def Reconnect():
 	   time.sleep(5)
            break
         time.sleep(0.5)
+	if i==29:
+	   os.popen("killall pppd")
+	   time.sleep(5)
+	   break
+	   print "Fail to Re-establish"
 
 
 
@@ -106,8 +111,8 @@ class DataSlog:
 		signal.alarm(0)
         except:
 		print "Something is wrong with connection"
-		Reconnect()         
 		signal.alarm(0)
+		Reconnect()         
         #return SlogResult
 
     def Burst(self):

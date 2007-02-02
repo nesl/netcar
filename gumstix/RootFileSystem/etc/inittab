@@ -24,7 +24,7 @@ null::sysinit:/bin/hostname -F /etc/hostname
 
 # Change Serial Setting and Start Bluetooth
 ::wait:/root/trans
-::once:/etc/init.d/S30bluetooth start
+::wait:/etc/init.d/S30bluetooth start
 
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS start
@@ -36,12 +36,11 @@ null::sysinit:/bin/hostname -F /etc/hostname
 null::sysinit:/bin/touch /var/log/messages
 null::respawn:/sbin/syslogd -n -m 0
 null::respawn:/sbin/klogd -n
-null::respawn:/root/keepalive
+#null::respawn:/root/keepalive
 
-#running Application
-::wait:/bin/sleep 30
+#running Application wait until system stabilized
+#::wait:/bin/sleep 30
 ::respawn:/home/MainProgram/RUN
-#::wait:/root/ddd.py
 
 # Stuff to do before rebooting
 ::shutdown:/etc/init.d/rcS stop
