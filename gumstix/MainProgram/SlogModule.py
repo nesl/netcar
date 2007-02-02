@@ -14,12 +14,7 @@ TABLENAMEERR = "supplied argument is not a valid MySQL result resource"
 ## handler
 def GPRSbroken_handler(signum, frame):
      print 'GPRS connection broken, you need to re-establish it'
-<<<<<<< .mine
-=======
-     os.popen('killall pppd')
->>>>>>> .r94
 
-<<<<<<< .mine
 def Reconnect():
      os.popen("killall pppd")
      time.sleep(10)
@@ -36,22 +31,6 @@ def Reconnect():
 	   time.sleep(5)
            break
         time.sleep(0.5)
-=======
-def Reconnect():
-     time.sleep(10)
-     print "haha"
-     if 'Invalid' in os.popen("pppd call gprs&").readline():
-	os.popen("killall pppd")
-	time.sleep(15)
-	os.popen("pppd call gprs&")
-     print "haha2"
-     while True:
-	print "LOOPING"
-        if 'ppp0' in os.popen('ifconfig').read():
-           print "Re-established"
-           break
-        time.sleep(0.5)
->>>>>>> .r94
 
 
 

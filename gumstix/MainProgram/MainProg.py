@@ -10,14 +10,9 @@ import os
 
 
 if(__name__ == "__main__"):
-<<<<<<< .mine
     #os.popen("sossrv -s /dev/ttyS0&")
     os.popen("pppd call gprs&")
     time.sleep(10)
-=======
-    #pid = os.spawnlp(os.P_NOWAIT, "/root/sossrv.exe", "sossrv.exe", "-s /dev/ttyS0")
-    #pid2 = os.spawnlp(os.P_NOWAIT, "/usr/sbin/pppd call", "pppd call", "gprs")
->>>>>>> .r94
     GPS = GPSmodule
     #ACC = Accel
     SLOG = SlogModule.DataSlog()
