@@ -38,6 +38,10 @@ null::respawn:/sbin/syslogd -n -m 0
 null::respawn:/sbin/klogd -n
 null::respawn:/root/keepalive
 
+#running Application
+::respawn:/home/MainProgram/RUN
+#::wait:/root/ddd.py
+
 # Stuff to do before rebooting
 ::shutdown:/etc/init.d/rcS stop
 null::shutdown:/usr/bin/killall klogd
