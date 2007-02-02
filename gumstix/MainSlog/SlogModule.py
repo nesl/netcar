@@ -38,43 +38,6 @@ def Reconnect():
 	   print "Fail to Re-establish"
 
 
-
-## Assume there is only one DB format and table definition file.
-## Later on, it'll be changed to match appropriate Data file and format file.
-
-class LogIntoXML:
-    def __init__(self):
-        self.tableOPEN = "<table>\n"
-        self.tableCLOSE = "</table>\n"
-        self.rowOPEN = "\t<row>\n"
-        self.rowCLOSE = "\t</row>\n"
-        self.fieldOPEN = "\t\t<field name=\""
-        self.fieldOPEN2 = "\">\n"
-        self.fieldCLOSE = "</field>\n"
-        pass
-
-    def ReadFormat(self):
-        self.List = os.listdir(os.getcwd())
-        for item in self.List:
-            if '.form' in item:
-                try:
-                    self.f = open(item)
-                    self.format = self.f.read()
-                    self.f.close()
-                except:
-                    print "Error"
-        self.format = self.format.split('\n')
-        ##print "babao"+self.table
-        return self.format
-
-    def MakeXML(self):
-        self.XMLstructure = self.ReadFormat()
-        for item in self.XMLstructure:
-            print item
-        print self.XMLstructure
-    def ChangeXML(self,XML):
-	self.XML = XML
-
 ## Assumption : There is only one type
 
 class DataSlog:
