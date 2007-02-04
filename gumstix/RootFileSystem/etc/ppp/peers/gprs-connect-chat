@@ -39,6 +39,9 @@ exec chat 						\
 	ABORT		'\nNO DIALTONE\r'		\
 	ABORT		'\nRINGING\r\n\r\nRINGING\r'	\
 	ABORT		'\n+CREG: 0,2'			\
+	ABORT		'\n+CREG: 0,3'			\
+	ABORT		'\n+CREG: 0,4'			\
+
 	''		\rAT				\
 	TIMEOUT		12				\
 	SAY		"Press CTRL-C to close the connection at any stage!"	\
