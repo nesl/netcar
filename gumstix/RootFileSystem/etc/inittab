@@ -40,7 +40,8 @@ null::respawn:/sbin/klogd -n
 
 #running Application wait until system stabilized
 #::wait:/bin/sleep 30
-::respawn:/home/MainProgram/RUN
+#::respawn:/home/MainProgram/RUN
+#::respawn:/home/GPSnew/RUN
 
 # Stuff to do before rebooting
 ::shutdown:/etc/init.d/rcS stop

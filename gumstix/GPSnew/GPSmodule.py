@@ -8,7 +8,8 @@ import math
 
 ## Each Module has a Queue in it.
 GPSXMLqueue = Queue.Queue(20)
-DIFF = 0.00000000003 # FILTER : DEGREE
+#DIFF = 0.000003 # FILTER : DEGREE
+DIFF = 0
 
 class GPSmodule:
     def __init__(self):

@@ -1,9 +1,7 @@
 #!/usr/bin/python
 
 import sys
-sys.path.append("/home/MainProgram")
 import GPSmodule
-import Accel
 import SlogModule
 import time
 import os
@@ -21,16 +19,18 @@ if(__name__ == "__main__"):
     time.sleep(5)
     while True:
         SLOG.ChangeDB('kimyh@ucla.edu','password','85','GPS')
-        try:
-		XML = GPS.GPSXMLqueue.get(True,20)
-		SLOG.ChangeXML(XML)
-		SLOG.Slog()
-	except:
-		sys.exit(1)
+	XML = GPS.GPSXMLqueue.get()
+	SLOG.ChangeXML(XML)
+	Result = SLOG.Slog()
+	#print Result
+	if "ConnectionFails" in Result:
+		try:
+			GPS.GPSXMLqueue.put(XML,True,0.5)
+		except:
+			print "missing again"
+	else:
+		pass
 
-        #SLOG.ChangeDB('kimyh@ucla.edu','password','85','Accel')
-	#XML =  ACC.AccXMLQueue.get()
-        #SLOG.ChangeXML(XML)
-        #SLOG.Slog()
-        
-        
+
+
+

@@ -83,7 +83,7 @@ class GPSmodule:
         time.sleep(5) ## wait until GPS settles
         while 1:
             (lat,lon,alt) = GPS.getCoordinates()
-            #print GPS.getTime()
+            print GPS.getTime()
 	    try: 
             	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
 	    except:

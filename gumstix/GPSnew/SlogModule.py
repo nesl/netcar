@@ -76,7 +76,8 @@ class DataSlog:
 		print "Something is wrong with connection"
 		signal.alarm(0)
 		Reconnect()
-		SlogResult = "DATA POST result: Connection Fails Try Again"
+		SlogResult = "DATA POST result: ConnectionFails Try Again"
+	print SlogResult
         return SlogResult
 
     def Burst(self):
