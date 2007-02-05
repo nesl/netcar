@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /home/MainProgram
+/usr/bin/python /home/MainProgram/MainProg.py
+killall pppd

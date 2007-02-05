@@ -1,14 +1,14 @@
 import sys
-sys.path.append("/home/MainProgram")
 import gps
 import time
 import os
 import Queue
 import thread
+import math
 
 ## Each Module has a Queue in it.
 GPSXMLqueue = Queue.Queue(20)
-
+DIFF = 0.00000000003 # FILTER : DEGREE
 
 class GPSmodule:
     def __init__(self):
@@ -19,6 +19,7 @@ class GPSmodule:
         self.fieldOPEN = "\t\t<field name=\""
         self.fieldOPEN2 = "\">"
         self.fieldCLOSE = "</field>\n"
+        self.PREVIOUS = None
         try:
             thread.start_new_thread(self.runGPS, ())
         except thread.error:
@@ -82,18 +83,34 @@ class GPSmodule:
         GPS.start()
         time.sleep(5) ## wait until GPS settles
         while 1:
+            st = time.time()
             (lat,lon,alt) = GPS.getCoordinates()
-            #print GPS.getTime()
-	    try: 
-            	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
-	    except:
-		print "GPS is not valid"
-	    #print XML
             try:
-                GPSXMLqueue.put(XML,True,0.5)
+                DiffDegree = math.pow(self.PREVIOUS[0]-lat,2)+math.pow(self.PREVIOUS[1]-lon,2)
             except:
-                print "You're missing GPS data"
-            time.sleep(1)
+                print "GPS is not valid FAIL to calculate difference"
+            #print GPS.getTime()
+            try:
+                if self.PREVIOUS == None:
+        	    try: 
+                    	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+                        self.PREVIOUS = [lat,lon]
+        	    except:
+        		print "GPS is not valid"
+                    GPSXMLqueue.put(XML,True,0.5)
+                elif  DiffDegree > DIFF:
+        	    try: 
+                    	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+                        self.PREVIOUS = [lat,lon]
+        	    except:
+        		print "GPS is not valid"
+                    GPSXMLqueue.put(XML,True,0.5)
+                else:
+                    pass
+            except:
+                print "You're missing GPS data because QUEUE is full"
+            ed = time.time() - st
+            time.sleep(1-ed)
 
 ## Assumption : There is only one type
 
