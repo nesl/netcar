@@ -1,0 +1,6 @@
+- manufact specific sensors dtc's
+  - you can determine the manufact from the VIN
+- Infotypes: vin, ignition counter, etc
+- Implement DTC reading
+- Implement freeze frame reading
+
