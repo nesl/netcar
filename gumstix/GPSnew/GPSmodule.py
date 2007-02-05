@@ -8,7 +8,20 @@ import math
 
 ## Each Module has a Queue in it.
 GPSXMLqueue = Queue.Queue(20)
-#DIFF = 0.000003 # FILTER : DEGREE
+# Assume Earth's diameter : 40008km
+# 40008km : 360 = 100m : 8.99820026*10^-4 :: Longitude 1 degree = 111133.3333m
+# 40008km : 180 = 100m : 4.49910018*10^-4 :: Latitude 1 degree = 222266.6667m
+# Nomarlize 360 :
+
+#Choose one of them: 100m, 50m, Home testing
+
+# 100m : 8.99820026*10^-4 => square : 8.096760792*10^-7
+#DIFF = 0.00000080968
+
+# 50m : 4.49910013*10^-4 => square : 2.024190198*10^-7
+#DIFF = 0.0000002024190198
+
+#For home testing 
 DIFF = 0
 
 class GPSmodule:
@@ -87,7 +100,7 @@ class GPSmodule:
             st = time.time()
             (lat,lon,alt) = GPS.getCoordinates()
             try:
-                DiffDegree = math.pow(self.PREVIOUS[0]-lat,2)+math.pow(self.PREVIOUS[1]-lon,2)
+                DiffDegree = 4*math.pow(self.PREVIOUS[0]-lat,2)+math.pow(self.PREVIOUS[1]-lon,2)
             except:
                 print "GPS is not valid FAIL to calculate difference"
             #print GPS.getTime()
