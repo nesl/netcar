@@ -5,8 +5,10 @@ import socket
 import sys
 import struct
 import time
+import os.path
 import wx
 import wx.lib.plot as plot
+from rpy import *
 
 ACCELEROMETER_MODULE = 0x80
 
@@ -124,10 +126,20 @@ class BaseStation(wx.Frame):
         except thread.error:
             print error
     def OnPlot(self, e):
-        d = wx.MessageDialog(self, "Hit Plot"
-                             " in python", "blah", wx.OK)
-        d.ShowModal()
-        d.Destroy()
+
+#        self.dirname = ''
+#        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+#        if dlg.ShowModal() == wx.ID_OK:
+#            self.filename=dlg.GetFilename()
+#            self.dirname=dlg.GetDirectory()
+#            f=open(os.path.join(self.dirname,self.filename),'r')
+#            self.control.SetValue(f.read())
+#            f.close()
+#        dlg.Destroy()
+
+        r.source("static_plot.R")
+        
+        
 
     def OnExit(self, e):
         self.Close(True)
