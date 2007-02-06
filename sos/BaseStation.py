@@ -40,6 +40,7 @@ class SocketClient:
 
 
 class BaseStation:
+    """ """
     def __init__(self):
 
         self.sc = SocketClient("127.0.0.1", 7915)
