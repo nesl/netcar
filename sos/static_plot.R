@@ -1,27 +1,25 @@
-function(file-name,data-size)
+staticPlot = function(fileName,dataSize)
 {
-  ## Size of the Dataset
-  DATA_SIZE = 9
-  ## Name of the file
-  FILE_NAME = "test.log"
+  print(fileName)
+  print(dataSize)
 
-  file_data = scan(FILE_NAME,,DATA_SIZE)
-  linux_time = 0
+  fileData = scan(fileName,,(dataSize * 3))
+  linuxTime = 0
   ac0 = 0
   ac1 = 0
 
-  for(i in 1 : DATA_SIZE) {
+  for(i in 1 : (dataSize * 3)) {
     if(i %% 3 == 1){
-      linux_time[i/3 + 1] = file_data[i]
+      linuxTime[i/3 + 1] = fileData[i]
     }
     if(i %% 3 == 2){
-      ac0[i/3 + 1] = file_data[i]
+      ac0[i/3 + 1] = fileData[i]
     }
     if(i %% 3 == 0){
-      ac1[i/3] = file_data[i]
+      ac1[i/3] = fileData[i]
     }
   }
 
   ## Plotting the graph
-  plot(linux_time, ac0)
+  plot(linuxTime, ac0)
 }

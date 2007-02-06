@@ -137,7 +137,8 @@ class BaseStation(wx.Frame):
 #            f.close()
 #        dlg.Destroy()
 
-        r.source("static_plot.R")
+        r.source("staticPlot.R")
+        r.staticPlot("test.log",5)
         
         
 
