@@ -98,20 +98,71 @@ class BaseStation(wx.Frame):
         self.graphs.append(plot.PlotCanvas(self))
         self.graphs.append(plot.PlotCanvas(self))
         self.graphs.append(plot.PlotCanvas(self))
-        self.graphs.append(plot.PlotCanvas(self))
         for g in self.graphs:
             g.SetEnableLegend(True)
 
             sizer.Add(g, 0, wx.EXPAND )
 
+        #add the pannel to tag the data
+        panel = wx.Panel(self)
+        buttonSizer = wx.GridSizer(1, 2)
+
+        panel.SetSizer(buttonSizer)
+
+        b = wx.Button(panel, -1, "start")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+
+        b = wx.Button(panel, -1, "stop")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+        b = wx.Button(panel, -1, "left turn")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+
+        b = wx.Button(panel, -1, "right turn")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+
+        b = wx.Button(panel, -1, "speedbump")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+
+        b = wx.Button(panel, -1, "ruff road")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+
+        b = wx.Button(panel, -1, "speed up")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+
+        b = wx.Button(panel, -1, "slow down")
+        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+        buttonSizer.Add(b, 0, wx.EXPAND)
+
+
+        sizer.Add(panel, 0, wx.EXPAND)
+
         self.Show(True)
 
         self.index = 0
+        self.time = 0
         self.d0 = {}
         self.d1 = {}
         self.d2 = {}
+        self.file = 0
 
         EVT_RESULT(self,self.OnResult)
+
+    def OnButtonTag(self, e):
+        """Handles the button events and tags the datastream with the action.
+        """
+        if not self.file:
+            self.file = open("event.log", 'w')
+        tag = e.GetEventObject().GetLabel()
+        
+        self.file.write("%s\t%s\n"%(self.time, tag))
+
 
     # Handlers for events on "Connect" "Plot" and "Exit"
     def OnConnect(self, e):
@@ -171,7 +222,7 @@ class BaseStation(wx.Frame):
             lines[1].append(plot.PolyLine(self.d1[src_addr], legend=str(src_addr)+' accel1', colour=collist[i], width=1))
             lines[2].append(plot.PolyLine(self.d2[src_addr], legend=str(src_addr)+' accel2', colour=collist[i], width=1))
             i += 1
-        for i in range(len(self.graphs)-1):
+        for i in range(len(self.graphs)):
             gc = plot.PlotGraphics(lines[i], 'Accelerations', 'Time [s]', 'Acceleration')
         # the X axis shows the last 500 samples
             self.graphs[i].Draw(gc, xAxis= (self.d0[src_addr][max(-500, -len(self.d0[src_addr]))][0], self.d0[src_addr][-1][0]), yAxis= (0, 1024))
@@ -191,7 +242,7 @@ class BaseStation(wx.Frame):
             data = ord(self.sc.s.recv(1))
             #print data, ACCELEROMETER_MODULE
             if data == ACCELEROMETER_MODULE:
-                time_rx = time.time()
+                #time_rx = time.time()
                 try:
                     s = self.sc.s.recv(7)
                     (src_mod, dst_addr, src_addr, msg_type, msg_length) = struct.unpack("<BHHBB", s)
@@ -206,6 +257,7 @@ class BaseStation(wx.Frame):
                         msg_length -= 4
                         (time_rx, ) = struct.unpack("<L", s)
                         time_rx /= 115200.0
+                        self.time = time_rx
                     except struct.error:
                         print struct.error
                         print "bad string for time:", map(ord, s)

@@ -1,5 +1,5 @@
 PROJ = main_app
-ROOTDIR = $(SOS_DIR)
+ROOTDIR = $(SOSROOT)
 
 SRCS += accel_sampler.c loader.c rats.c linear.c
 
