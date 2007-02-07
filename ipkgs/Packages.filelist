@@ -1,0 +1,11 @@
+GPS.table netcargps:all:./home/GPSnew/GPS.table,netcargps:arm:./home/GPSnew/GPS.table
+GPSDB.form netcargps:all:./home/GPSnew/GPSDB.form,netcargps:arm:./home/GPSnew/GPSDB.form
+GPSmodule.py netcargps:all:./home/GPSnew/GPSmodule.py,netcargps:arm:./home/GPSnew/GPSmodule.py
+LatLongUTMconversion.py netcargps:all:./home/GPSnew/LatLongUTMconversion.py,netcargps:arm:./home/GPSnew/LatLongUTMconversion.py
+MainProg.py netcargps:all:./home/GPSnew/MainProg.py,netcargps:arm:./home/GPSnew/MainProg.py
+NMEA.py netcargps:all:./home/GPSnew/NMEA.py,netcargps:arm:./home/GPSnew/NMEA.py
+RUN netcargps:all:./home/GPSnew/RUN,netcargps:arm:./home/GPSnew/RUN
+SlogModule.py netcargps:all:./home/GPSnew/SlogModule.py,netcargps:arm:./home/GPSnew/SlogModule.py
+bing bing:arm:./bin/bing
+gps.py netcargps:all:./home/GPSnew/gps.py,netcargps:arm:./home/GPSnew/gps.py
+sossrv sossrv:arm:./usr/bin/sossrv
