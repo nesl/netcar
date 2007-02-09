@@ -186,21 +186,24 @@ class BaseStation(wx.Frame):
             print error
     def OnPlot(self, e):
 
-#        self.dirname = ''
-#        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
-#        if dlg.ShowModal() == wx.ID_OK:
-#            self.filename=dlg.GetFilename()
-#            self.dirname=dlg.GetDirectory()
-#            f=open(os.path.join(self.dirname,self.filename),'r')
-#            self.control.SetValue(f.read())
-#            f.close()
-#        dlg.Destroy()
+        self.dirname = ''
+        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+        if dlg.ShowModal() == wx.ID_OK:
+            self.filename=dlg.GetFilename()
+        dlg.Destroy()
 
+        rFilename = '"' + self.filename + '"'
+
+        print(rFilename)
+
+        r.scan(rFilename, ,5)
+        print("hello")
+        r.scan(self.filename)
+        print("hello")
+        r.scan("test.log")
         r.source("staticPlot.R")
         r.staticPlot("test.log",5)
         
-        
-
     def OnExit(self, e):
         self.Close(True)
 
