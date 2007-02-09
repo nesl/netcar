@@ -1,0 +1,9 @@
+Package: netcar
+Priority: optional
+Version: 0.0.0
+Architecture: arm
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+Section: net
+Source: http://www.seas.ucla.edu/~kimy
+Description: This is main root of NetCar Application.
+
