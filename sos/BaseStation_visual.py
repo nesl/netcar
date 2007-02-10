@@ -9,7 +9,7 @@ import os.path
 import wx
 import wx.lib.plot as plot
 import gps
-#from rpy import *
+from rpy import *
 
 ACCELEROMETER_MODULE = 0x80
 
@@ -196,7 +196,7 @@ class BaseStation(wx.Frame):
 
         print(rFilename)
 
-        r.scan(rFilename, ,5)
+        r.scan(rFilename,5)
         print("hello")
         r.scan(self.filename)
         print("hello")
