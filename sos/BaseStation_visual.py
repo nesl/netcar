@@ -31,6 +31,8 @@ collist = ['green',
 	   'black',
 	   'yellow']
 
+events = ['start', 'stop', 'left turn', 'right turn', 'speedbump', 'ruff road', 'speed up', 'slow down', 'obstacle']
+
 def EVT_RESULT(win, func):
     """Define Result Event."""
     win.Connect(-1, -1, EVT_RESULT_ID, func)
@@ -106,45 +108,27 @@ class BaseStation(wx.Frame):
 
         #add the pannel to tag the data
         panel = wx.Panel(self)
-        buttonSizer = wx.GridSizer(1, 2)
+        buttonSizer = wx.GridSizer(1, 3)
 
         panel.SetSizer(buttonSizer)
 
-        b = wx.Button(panel, -1, "start")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-
-        b = wx.Button(panel, -1, "stop")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-        b = wx.Button(panel, -1, "left turn")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-
-        b = wx.Button(panel, -1, "right turn")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-
-        b = wx.Button(panel, -1, "speedbump")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-
-        b = wx.Button(panel, -1, "ruff road")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-
-        b = wx.Button(panel, -1, "speed up")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-
-        b = wx.Button(panel, -1, "slow down")
-        self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
-        buttonSizer.Add(b, 0, wx.EXPAND)
-
+        accels = []
+        
+        i = 1
+        for e in events:
+            b = wx.Button(panel, -1, str(i) + " " + e)
+            self.Bind(wx.EVT_BUTTON, self.OnButtonTag, b)
+            buttonSizer.Add(b, 0, wx.EXPAND)
+            i += 1
+             
+        self.Bind(wx.EVT_KEY_DOWN, self.KeyPressed, self)
 
         sizer.Add(panel, 0, wx.EXPAND)
 
+        self.CreateStatusBar()
+
         self.Show(True)
+        panel.SetFocus()
 
         self.g = gps.GpsThread("/dev/ttyUSB3")
 
@@ -160,6 +144,19 @@ class BaseStation(wx.Frame):
 
         EVT_RESULT(self,self.OnResult)
 
+    def KeyPressed(self, e):
+        key = e.GetKeyCode()
+        if not self.file:
+            self.file = open(self.dir + "event.log", 'w')
+            self.file.write("#time\tevent\n\n")
+            self.file.flush()
+
+        if key >= 49 and key <= 57:
+            #1 pressed
+            self.file.write("%s\t%s\n"%(self.time, events[key-49]))
+            self.file.flush()
+            self.SetStatusText(events[key-49])
+            
     def OnButtonTag(self, e):
         """Handles the button events and tags the datastream with the action.
         """
@@ -168,7 +165,7 @@ class BaseStation(wx.Frame):
             self.file.write("#time\tevent\n\n")
             self.file.flush()
         tag = e.GetEventObject().GetLabel()
-        
+        print tag 
         self.file.write("%s\t%s\n"%(self.time, tag))
         self.file.flush()
 
