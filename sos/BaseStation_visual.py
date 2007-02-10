@@ -314,20 +314,19 @@ class BaseStation(wx.Frame):
                             nodes[src_addr]['file'].write('%f\t%d\t%d\t%d\n'%(time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel0[i], accel1[i], accel2[i]))
 
                         nodes[src_addr]['last_seen'] = time_rx
-                        if src_addr == 0:
-                            if not self.gpsfile:
-                                self.gpsfile = open(self.dir + 'gps.log', 'w')
-                                self.gpsfile.write("#nodeTime\tlat\tlon\talt\tUTC\tspeed\tsatellites\tpdop\tsatelliteStats\n\n")
-                            self.gpsfile.write("%f\t"%(self.time,))
-                            self.gpsfile.write("%f\t%f\t%f\t"%self.g.getCoordinates())
-                            self.gpsfile.write("%s\t%s\t"%(self.g.getTime(), self.g.getSpeed()))
-                            self.gpsfile.write("%d\t"%self.g.getSatellites())
-                            self.gpsfile.write("%f\t"%(self.g.getPDOP(),))
-                            s = self.g.getSatelliteStatistics()
-                            self.gpsfile.write((12*"%d\t")%tuple(s[0]))
-                            self.gpsfile.write((12*"%d\t")%tuple(s[1]))
-                            self.gpsfile.write("\n")
-                            wx.PostEvent(self, ResultEvent({'src_addr': src_addr, 'accel0': d0, 'accel1': d1, 'accel2': d2}))
+                        if not self.gpsfile:
+                            self.gpsfile = open(self.dir + 'gps.log', 'w')
+                            self.gpsfile.write("#nodeTime\tlat\tlon\talt\tUTC\tspeed\tsatellites\tpdop\tsatelliteStats\n\n")
+                        self.gpsfile.write("%f\t"%(self.time,))
+                        self.gpsfile.write("%f\t%f\t%f\t"%self.g.getCoordinates())
+                        self.gpsfile.write("%s\t%s\t"%(self.g.getTime(), self.g.getSpeed()))
+                        self.gpsfile.write("%d\t"%self.g.getSatellites())
+                        self.gpsfile.write("%f\t"%(self.g.getPDOP(),))
+                        s = self.g.getSatelliteStatistics()
+                        self.gpsfile.write((12*"%d\t")%tuple(s[0]))
+                        self.gpsfile.write((12*"%d\t")%tuple(s[1]))
+                        self.gpsfile.write("\n")
+                        wx.PostEvent(self, ResultEvent({'src_addr': src_addr, 'accel0': d0, 'accel1': d1, 'accel2': d2}))
 
                     #print accel0
                     #print accel1

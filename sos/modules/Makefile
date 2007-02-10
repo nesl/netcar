@@ -1,6 +1,6 @@
 
 PROJ = accel_sampler
-ROOTDIR = $(SOS_DIR)
+ROOTDIR = $(SOSROOT)
 INCDIR += -I$(ROOTDIR)/modules/sensordrivers/h34c/include/
 SB = h34c
 
