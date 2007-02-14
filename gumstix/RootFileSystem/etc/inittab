@@ -23,8 +23,8 @@ null::sysinit:/bin/mount -a
 null::sysinit:/bin/hostname -F /etc/hostname
 
 # Change Serial Setting and Start Bluetooth
-::wait:/root/trans
-::wait:/etc/init.d/S30bluetooth start
+null::wait:/root/trans
+null::wait:/etc/init.d/S30bluetooth start
 
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS start
@@ -36,7 +36,10 @@ null::sysinit:/bin/hostname -F /etc/hostname
 null::sysinit:/bin/touch /var/log/messages
 null::respawn:/sbin/syslogd -n -m 0
 null::respawn:/sbin/klogd -n
-#null::respawn:/root/keepalive
+
+# Update application
+null::wait:/etc/netcarinit/milestone
+null::wait:/etc/netcarinit/netcarinit
 
 #running Application wait until system stabilized
 #::wait:/bin/sleep 30
