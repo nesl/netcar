@@ -34,6 +34,18 @@ Source: http://projects.nesl.ucla.edu/netcar
 Description: GPS slogging Application
 
 
+Package: netcarroot
+Version: 0.0.1
+Section: comm
+Architecture: arm
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+MD5Sum: d0bf54bb0b675f841c311c5a942e9e3d
+Size: 844
+Filename: netcarroot_0.0.1_arm.ipk
+Source: http://www.seas.ucla.edu/~kimy
+Description: This is netcarroot
+
+
 Package: sossrv
 Version: 1.0
 Section: misc

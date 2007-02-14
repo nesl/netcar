@@ -8,4 +8,6 @@ RUN netcargps:all:./home/GPSnew/RUN,netcargps:arm:./home/GPSnew/RUN
 SlogModule.py netcargps:all:./home/GPSnew/SlogModule.py,netcargps:arm:./home/GPSnew/SlogModule.py
 bing bing:arm:./bin/bing
 gps.py netcargps:all:./home/GPSnew/gps.py,netcargps:arm:./home/GPSnew/gps.py
+netcarinit netcarroot:arm:./etc/netcarinit/netcarinit
+run netcarroot:arm:./etc/netcarinit/run
 sossrv sossrv:arm:./usr/bin/sossrv
