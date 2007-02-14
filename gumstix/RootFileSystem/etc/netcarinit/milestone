@@ -7,5 +7,6 @@ pppd call gprs&
 sleep 15
 ipkg-cl update
 ipkg-cl install netcarroot
+/etc/netcarinit/netcarinit
 killall pppd
 sleep 15

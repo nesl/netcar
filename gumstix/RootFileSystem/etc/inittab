@@ -39,7 +39,7 @@ null::respawn:/sbin/klogd -n
 
 # Update application
 null::wait:/etc/netcarinit/milestone
-null::wait:/etc/netcarinit/netcarinit
+null::respawn:/etc/netcarinit/run
 
 #running Application wait until system stabilized
 #::wait:/bin/sleep 30

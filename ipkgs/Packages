@@ -39,8 +39,8 @@ Version: 0.0.1
 Section: comm
 Architecture: arm
 Maintainer: Younghun Kim <kimyh@ucla.edu>
-MD5Sum: d0bf54bb0b675f841c311c5a942e9e3d
-Size: 844
+MD5Sum: f0a14ea2d15152b8cdddd5af030e3db2
+Size: 846
 Filename: netcarroot_0.0.1_arm.ipk
 Source: http://www.seas.ucla.edu/~kimy
 Description: This is netcarroot
