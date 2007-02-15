@@ -58,3 +58,15 @@ Source: http://nesl.ee.ucla.edu
 Description: This is a SOS-SERVER application.
 
 
+Package: usbnet
+Version: 0.0.1
+Section: comm
+Architecture: arm
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+MD5Sum: a8bb83377d5fcfba78ceb80bfb9457ab
+Size: 1010
+Filename: usbnet_0.0.1_arm.ipk
+Source: http://www.gumstix.com
+Description: This sets USBnet
+
+
