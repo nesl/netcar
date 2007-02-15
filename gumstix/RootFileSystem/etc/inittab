@@ -24,7 +24,8 @@ null::sysinit:/bin/hostname -F /etc/hostname
 
 # Change Serial Setting and Start Bluetooth
 null::wait:/root/trans
-null::wait:/etc/init.d/S30bluetooth start
+#null::wait:/root/turngprs
+null::once:/etc/init.d/S30bluetooth start
 
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS start
@@ -37,14 +38,10 @@ null::sysinit:/bin/touch /var/log/messages
 null::respawn:/sbin/syslogd -n -m 0
 null::respawn:/sbin/klogd -n
 
-# Update application
+#Dynamic Update(ipkg update)
 null::wait:/etc/netcarinit/milestone
 null::respawn:/etc/netcarinit/run
 
-#running Application wait until system stabilized
-#::wait:/bin/sleep 30
-#::respawn:/home/MainProgram/RUN
-#::respawn:/home/GPSnew/RUN
 
 # Stuff to do before rebooting
 ::shutdown:/etc/init.d/rcS stop
