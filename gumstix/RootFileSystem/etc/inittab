@@ -25,7 +25,7 @@ null::sysinit:/bin/hostname -F /etc/hostname
 # Change Serial Setting and Start Bluetooth
 null::wait:/root/trans
 #null::wait:/root/turngprs
-null::once:/etc/init.d/S30bluetooth start
+null::wait:/etc/init.d/S30bluetooth start
 
 # now run any rc scripts
 ::sysinit:/etc/init.d/rcS start
