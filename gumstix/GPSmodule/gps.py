@@ -77,6 +77,13 @@ class GpsThread ( threading.Thread):
         in_view = self.__nmea.in_view
         self.semaphore.release()
         return (ss, prn, in_view)
+
+# added to acquire PDOP(Younghun)
+    def getPDOP(self):
+        self.semaphore.acquire()
+        s = self.__nmea.pdop
+        self.semaphore.release()
+        return s
     
     def run(self):
         print "in gps run"
@@ -88,8 +95,11 @@ class GpsThread ( threading.Thread):
 
 
         while self.running:
-            line = gpsdev.readline()
-            self.gpsInput(line)
+	    try:
+           	 line = gpsdev.readline()
+    	         self.gpsInput(line)
+	    except:
+		 print "Strange GPS data"
 	    #print self.getCoordinates()
 
             #print nmea.lat, nmea.lon, (nmea.speedunits % (nmea.speed * nmea.speedmultiplier))

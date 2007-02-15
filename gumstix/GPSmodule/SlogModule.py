@@ -4,6 +4,7 @@ import thread
 import sys,os
 import urllib
 import urllib2
+import time
 import signal
 
 ERROR = "An error occurred while slogging."
@@ -13,45 +14,29 @@ TABLENAMEERR = "supplied argument is not a valid MySQL result resource"
 ## handler
 def GPRSbroken_handler(signum, frame):
      print 'GPRS connection broken, you need to re-establish it'
-     raise IOError, "Couldn't slog it"
 
+def Reconnect():
+     os.popen("killall pppd")
+     time.sleep(10)
+     print "haha"
+     if 'Invalid' in os.popen("pppd call gprs&").readline():
+	os.popen("killall pppd")
+	time.sleep(15)
+	os.popen("pppd call gprs&")
+     print "haha2"
+     for i in range(30):
+	print "LOOPING"
+        if 'ppp0' in os.popen('ifconfig').read():
+           print "Re-established"
+	   time.sleep(5)
+           break
+        time.sleep(0.5)
+	if i==29:
+	   os.popen("killall pppd")
+	   time.sleep(5)
+	   break
+	   print "Fail to Re-establish"
 
-
-## Assume there is only one DB format and table definition file.
-## Later on, it'll be changed to match appropriate Data file and format file.
-
-class LogIntoXML:
-    def __init__(self):
-        self.tableOPEN = "<table>\n"
-        self.tableCLOSE = "</table>\n"
-        self.rowOPEN = "\t<row>\n"
-        self.rowCLOSE = "\t</row>\n"
-        self.fieldOPEN = "\t\t<field name=\""
-        self.fieldOPEN2 = "\">\n"
-        self.fieldCLOSE = "</field>\n"
-        pass
-
-    def ReadFormat(self):
-        self.List = os.listdir(os.getcwd())
-        for item in self.List:
-            if '.form' in item:
-                try:
-                    self.f = open(item)
-                    self.format = self.f.read()
-                    self.f.close()
-                except:
-                    print "Error"
-        self.format = self.format.split('\n')
-        ##print "babao"+self.table
-        return self.format
-
-    def MakeXML(self):
-        self.XMLstructure = self.ReadFormat()
-        for item in self.XMLstructure:
-            print item
-        print self.XMLstructure
-    def ChangeXML(self,XML):
-	self.XML = XML
 
 ## Assumption : There is only one type
 
@@ -79,13 +64,20 @@ class DataSlog:
 	print param
 	signal.signal(signal.SIGALRM, GPRSbroken_handler)
 	signal.alarm(15)
-        data = urllib.urlencode(param)
-        req = urllib2.Request(sb_api, data)
-        response = urllib2.urlopen(req)
-        SlogResult = "DATA POST result: " + response.read()
-        response.close()
+        try: 
+		data = urllib.urlencode(param)
+	        req = urllib2.Request(sb_api, data)
+	        response = urllib2.urlopen(req)
+	        SlogResult = "DATA POST result: " + response.read()
+	        response.close()
+		print SlogResult
+		signal.alarm(0)
+        except:
+		print "Something is wrong with connection"
+		signal.alarm(0)
+		Reconnect()
+		SlogResult = "DATA POST result: ConnectionFails Try Again"
 	print SlogResult
-	signal.alarm(0)
         return SlogResult
 
     def Burst(self):
