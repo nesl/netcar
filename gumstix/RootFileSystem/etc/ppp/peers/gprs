@@ -42,11 +42,11 @@ disconnect /etc/ppp/peers/gprs-disconnect-chat
 #/dev/ircomm0	# IrDA serial port one
 #/dev/rfcomm0	# Bluetooth serial port one
 #/dev/ttyUSB0	# USB serial device, for example Orange SPV
-/dev/ttyS2
+/dev/ttyS0
 
 # Serial port line speed
-#115200	# fast enough
-57600	# perhaps usefull with IrDA as some phones don't like 
+115200	# fast enough
+#57600	# perhaps usefull with IrDA as some phones don't like 
         # speeds higher than this
 
 # Hardware flow control:
