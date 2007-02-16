@@ -11,6 +11,19 @@ from LatLongUTMconversion import LLtoUTM
 import NMEA
 import threading
 
+#Logging setting
+import logging
+logger = logging.getLogger('gps')
+hdlr = logging.FileHandler('/home/SlogModule.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO)
+
+#logger.warning('a warning message')
+#logger.info('a log message')
+
+
 
 class GpsThread ( threading.Thread):
     # overwrite Thread's __init__ method
@@ -46,6 +59,7 @@ class GpsThread ( threading.Thread):
 	            self.__nmea.ZCH = 0
 	except:
 		print "man you were wrong"
+		logger.info('cannot find GPS satellites')
         self.semaphore.release()
 
     def getCoordinates(self):
@@ -100,7 +114,6 @@ class GpsThread ( threading.Thread):
         while self.running:
 	    try:
            	 line = gpsdev.readline()
-		 print line
     	         self.gpsInput(line)
 	    except:
 		 print "Strange GPS data"

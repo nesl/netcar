@@ -11,7 +11,7 @@ import signal
 #Logging setting
 import logging
 logger = logging.getLogger('SlogModule')
-hdlr = logging.FileHandler('SlogModule.log')
+hdlr = logging.FileHandler('/home/SlogModule.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 hdlr.setFormatter(formatter)
 logger.addHandler(hdlr)
