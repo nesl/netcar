@@ -1,0 +1,4 @@
+ipkg-cl update
+ipkg-cl install netcargps
+ipkg-cl install bing
+ipkg-cl install sossrv

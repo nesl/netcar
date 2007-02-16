@@ -1,0 +1,3 @@
+#!/bin/sh
+chmod +x /home/GPSnew/RUN
+return 0

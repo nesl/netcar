@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /home/GPSnew
+/usr/bin/python /home/GPSnew/MainProg.py
+killall pppd

@@ -1,0 +1,9 @@
+Package: sossrv
+Priority: optional
+Version: 1.0
+Architecture: arm
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+Depends: 
+Section: misc
+Source: http://nesl.ee.ucla.edu
+Description: This is a SOS-SERVER application.

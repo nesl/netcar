@@ -1,0 +1,9 @@
+Package: usbnet
+Priority: optional
+Version: 0.0.1
+Architecture: arm
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+Depends: 
+Section: comm
+Source: http://www.gumstix.com
+Description: This sets USBnet 

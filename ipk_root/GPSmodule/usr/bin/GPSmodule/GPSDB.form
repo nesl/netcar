@@ -1,0 +1,9 @@
+Altitude : Double 
+Latitude : Double 
+Longitude : Double 
+Precision : Integer 
+SatelliteCount : Integer 
+Speed : Float 
+TimeStamp : Date and Time 
+UID : Integer 
+SID : Integer

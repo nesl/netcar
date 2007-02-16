@@ -1,0 +1,4 @@
+#!/bin/sh
+chmod +x /etc/netcarinit/netcarinit
+chmod +x /etc/netcarinit/run
+return 0

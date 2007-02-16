@@ -1,0 +1,9 @@
+Package: netcargps
+Priority: optional
+Version: 0.0.3
+Architecture: arm
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+Depends: 
+Section: misc
+Source: http://projects.nesl.ucla.edu/netcar
+Description: GPS slogging Application modified :: detect difference.

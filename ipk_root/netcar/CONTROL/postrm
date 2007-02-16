@@ -1,0 +1,4 @@
+#!/bin/sh
+rm -rf /etc/netcarinit/netcarinit
+rm -rf /etc/netcarinit/run
+return 0

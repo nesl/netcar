@@ -1,0 +1,5 @@
+#!/bin/sh
+rm /etc/network/interfaces
+cp /etc/network/interfaces_old /etc/network/interfaces
+rm /etc/network/interfaces_old
+return 0
