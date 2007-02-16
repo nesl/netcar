@@ -35,14 +35,17 @@ class GpsThread ( threading.Thread):
     # handle input from gpsd.
     def gpsInput(self, line):
         self.semaphore.acquire()
-        self.__nmea.handle_line(line)
-        if self.__nmea.LATLON:
-            self.__nmea.LATLON = 0
+	try:
+	        self.__nmea.handle_line(line)
+	        if self.__nmea.LATLON:
+	            self.__nmea.LATLON = 0
 
-        if self.__nmea.SAT:
-            self.__nmea.SAT = 0
-        if self.__nmea.ZCH:
-            self.__nmea.ZCH = 0
+	        if self.__nmea.SAT:
+	            self.__nmea.SAT = 0
+	        if self.__nmea.ZCH:
+	            self.__nmea.ZCH = 0
+	except:
+		print "man you were wrong"
         self.semaphore.release()
 
     def getCoordinates(self):
@@ -97,6 +100,7 @@ class GpsThread ( threading.Thread):
         while self.running:
 	    try:
            	 line = gpsdev.readline()
+		 print line
     	         self.gpsInput(line)
 	    except:
 		 print "Strange GPS data"
