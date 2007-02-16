@@ -103,26 +103,27 @@ class GPSmodule:
                 DiffDegree = 4*math.pow(self.PREVIOUS[0]-lat,2)+math.pow(self.PREVIOUS[1]-lon,2)
             except:
                 print "GPS is not valid FAIL to calculate difference"
-            #print GPS.getTime()
+            print self.PREVIOUS
             try:
                 if self.PREVIOUS == None:
         	    try: 
                     	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
                         self.PREVIOUS = [lat,lon]
         	    except:
-        		print "GPS is not valid"
+        		print "GPS is not valid a"
                     GPSXMLqueue.put(XML,True,0.5)
                 elif  DiffDegree > DIFF:
         	    try: 
                     	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
                         self.PREVIOUS = [lat,lon]
         	    except:
-        		print "GPS is not valid"
+        		print "GPS is not valid b"
                     GPSXMLqueue.put(XML,True,0.5)
                 else:
+		    print "something happens"
                     pass
             except:
-                print "You're missing GPS data because QUEUE is full"
+                print "You're missing GPS data because QUEUE is full or not valid XML"
             ed = time.time() - st
             time.sleep(1-ed)
 
@@ -132,6 +133,9 @@ if(__name__ == "__main__"):
     Dummy = GPSmodule()
     time.sleep(5)
     while True:
-        print GPSXMLqueue.get()
+        try:
+		print GPSXMLqueue.get(True,3)
+	except:
+		pass
         time.sleep(0.1)
     

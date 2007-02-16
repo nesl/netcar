@@ -58,47 +58,65 @@ class GpsThread ( threading.Thread):
 	        if self.__nmea.ZCH:
 	            self.__nmea.ZCH = 0
 	except:
-		print "man you were wrong"
+		#print "man you were wrong"
 		logger.info('cannot find GPS satellites')
         self.semaphore.release()
 
     def getCoordinates(self):
         self.semaphore.acquire()
-        (long, lat, alt) = (self.__nmea.lat, self.__nmea.lon, self.__nmea.altitude)
+	try:
+	        (long, lat, alt) = (self.__nmea.lat, self.__nmea.lon, self.__nmea.altitude)
+	except:
+		pass
         self.semaphore.release()
         return (long, lat, alt)
 
     def getTime(self):
         """ The time is in UTC! """
         self.semaphore.acquire()
-        t = self.__nmea.time
+	try:
+        	t = self.__nmea.time
+	except:
+		pass
         self.semaphore.release()
         return t
 
     def getSpeed(self):
         self.semaphore.acquire()
-        s = (self.__nmea.speedunits % (self.__nmea.speed * self.__nmea.speedmultiplier))
+	try:
+        	s = (self.__nmea.speedunits % (self.__nmea.speed * self.__nmea.speedmultiplier))
+	except:
+		pass
         self.semaphore.release()
         return s
     
     def getSatellites(self):
         self.semaphore.acquire()
-        s = self.__nmea.satellites
+	try:
+        	s = self.__nmea.satellites
+	except:
+		pass
         self.semaphore.release()
         return s
     
     def getSatelliteStatistics(self):
         self.semaphore.acquire()
-        ss = list(self.__nmea.ss)
-        prn = list(self.__nmea.prn)
-        in_view = self.__nmea.in_view
+	try:
+        	ss = list(self.__nmea.ss)
+        	prn = list(self.__nmea.prn)
+        	in_view = self.__nmea.in_view
+	except: 
+		pass
         self.semaphore.release()
         return (ss, prn, in_view)
 
 # added to acquire PDOP(Younghun)
     def getPDOP(self):
         self.semaphore.acquire()
-        s = self.__nmea.pdop
+	try:
+        	s = self.__nmea.pdop
+	except:
+		pass
         self.semaphore.release()
         return s
     
@@ -114,7 +132,8 @@ class GpsThread ( threading.Thread):
         while self.running:
 	    try:
            	 line = gpsdev.readline()
-    	         self.gpsInput(line)
+    		 #print line
+	         self.gpsInput(line)
 	    except:
 		 print "Strange GPS data"
 	    #print self.getCoordinates()

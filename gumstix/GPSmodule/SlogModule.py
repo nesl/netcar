@@ -103,10 +103,10 @@ class DataSlog:
         self.sb_password = sb_password
         self.sb_project_id = sb_project_id
         self.sb_table = sb_table
-        print self.sb_email
-        print self.sb_password
-        print self.sb_project_id
-        print self.sb_table
+        #print self.sb_email
+        #print self.sb_password
+        #print self.sb_project_id
+        #print self.sb_table
 
     def ChangeXML(self,XML):
 	self.xml = XML
