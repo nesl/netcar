@@ -1,0 +1,96 @@
+source("staticPlot.R")
+staticPlot("0.log",100)
+staticPlot("0.log",100)
+source("staticPlot.R")
+staticPlot("0.log",100)
+source("staticPlot.R")
+staticPlot("0.log",100)
+staticPlot("0.log",5000)
+source("staticPlot.R")
+source("staticPlot.R")
+staticPlot("0.log",5000)
+staticPlot("0.log",60000)
+system("vi 0.log")
+l1 = read.table("1.log",head=T)
+dim(l1)
+l1[1,]
+system("vi 1.log")
+l1 = read.table("1.log",head=T)
+l1[1,]
+class(l1[,1])
+class(l1[,2])
+class(l1[,3])
+class(l1[,4])
+ls()
+system("vi event.log")
+event = read.table("event.log",sep="\t",head=T)
+event
+class(event[,1])
+class(event[,2])
+class(event[,3])
+ls()
+match(event[1,1],l1[,1])
+numatch = vi(funciton(){})
+numatch = vi("funciton(){}")
+numatch = edit()
+numatch
+numatch(l1[,1],event[1])
+numatch = vi(numatch)
+event[1,]
+l1[1,]
+numatch(l1[,1],event[1])
+event[1]
+event[1,1]
+numatch(l1[,1],event[1,1])
+l1[2077,1]
+numatch = vi(numatch)
+numatch(l1[,1],event[1,1])
+l1$event= 0
+l1[1,]
+for(i in 1:nrow(event)){
+ cc = numatch(l1[,1],event[i,1])
+ l1$event[cc] = event[i,2]
+}
+l1$event[1:10]
+table(l1$event)
+as.numeric(event[,2])
+cbind(as.character(event[,1]),as.numeric(event[,2]))
+cbind(as.character(event[,2]),as.numeric(event[,2]))
+names(l1)
+plot(l1$accel0,l1$accel1,col=l1$event)
+plot(l1$accel0,l1$accel1)
+l1[1:10,]
+plot(l1$accel1,l1$accel2)
+class(l1$accel1)
+class(l1$accel1)= "numeric"
+class(l1$accel2)= "numeric"
+class(l1$accel0)= "numeric"
+plot(l1$accel1,l1$accel2)
+range(l1$accel1)
+system("vi 1.log")
+l1 = l1[l1$accel1<=1024 & l1$accel0 <= 1024 & l1$accel2 <= 1024,]
+plot(l1$accel1,l1$accel2)
+plot(l1$accel1,l1$accel2,col=l1$event)
+pairs(cbind(l1$accel0,l1$accel1,l1$accel2),col=l1$event)
+library(lattice)
+plot(accel1~accel2|event,data=l1)
+xyplot(accel1~accel2|event,data=l1)
+xy
+levels(l1$event)
+levels(event[,2])
+l1$eventf = levels(event[,2])[l1$event]
+range(l1$event)
+l1$eventf = c("null",levels(event[,2]))[l1$event+1]
+xyplot(accel1~accel2|eventf,data=l1)
+xyplot(accel0~accel1|eventf,data=l1)
+plot(density(l1$accel0[l1$event==3]),type="l")
+es(density(l1$accel0[l1$event==4]),type="l")
+plot(density(l1$accel0[l1$event==4]),type="l")
+lines(density(l1$accel0[l1$event==3]),type="l")
+plot(density(l1$accel0[l1$event==4]),type="l",col=6)
+lines(density(l1$accel0[l1$event==3]),type="l",col=5)
+?save
+save("code_from_mark.txt")
+save(file="code_from_mark.txt")
+system("ls")
+savehistory(file="code_from_mark.txt")
