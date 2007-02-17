@@ -192,14 +192,13 @@ class BaseStation(wx.Frame):
         rFilename = '"' + self.filename + '"'
 
         print(rFilename)
+        print(self.filename)
 
-        r.scan(rFilename,5)
+        r.source("r_code/staticPlot.R")
+        #r.staticPlot(self.filename,5)
+        r.assign('filename',self.filename)
         print("hello")
-        r.scan(self.filename)
-        print("hello")
-        r.scan("test.log")
-        r.source("staticPlot.R")
-        r.staticPlot("test.log",5)
+        r('staticPlot(filename,5')
         
     def OnExit(self, e):
         self.Close(True)

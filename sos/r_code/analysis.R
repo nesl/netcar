@@ -1,7 +1,8 @@
-analysis = function(logFile,eventFile,logDataSize){
+analysis = function(logFile,eventFile,logDataSize,eventDataSize){
 
+  # reading log_file and event_file data
   log_file_data = scan(logFile, ,logDataSize * 4)
-  event_file_data = scan(eventFile, ,logDataSize * 2)
+  event_file_data = scan(eventFile, ,eventDataSize * 2)
 
   print("log_file_data")
   print(log_file_data)
@@ -14,7 +15,7 @@ analysis = function(logFile,eventFile,logDataSize){
   ac1 = 0
   ac2 = 0
 
-  # Divide the data up into its respective category
+  # Divide the log_file data up into its respective category
   for(i in 1 : (logDataSize * 4)) {
     if(i %% 4 == 1){
       linux_time[i/4 + 1] = log_file_data[i]
