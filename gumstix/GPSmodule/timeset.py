@@ -16,6 +16,7 @@ class TimeSet:
 	local.start()
 	print "Time Setting"
 	counting = 2
+	#for i in range(20):
 	while self.running:
 		tempTime = local.getTime()
 		print "loop"
@@ -33,6 +34,7 @@ class TimeSet:
 				print "set"
 				self.running=0
 				local.stop()
+				sys.exit(1)
 				break
 
 				#setting time using date

@@ -30,16 +30,17 @@ class GpsThread ( threading.Thread):
     def __init__(self):
         # init the nmea module
         self.semaphore = threading.Semaphore()
-        self.semaphore.acquire()
-        
-        self.__nmea = NMEA.NMEA()
-        self.__nmea.speedunits = "%.2f mph"
-        self.__nmea.speedmultiplier = 1.152
-        self.__nmea.speed = 1
-        self.__nmea.altitudemultiplier = 1.00
-        self.__nmea.altitudeunits = "%.2f meters"
-        self.__nmea.altitude = 5.7
-
+	self.semaphore.acquire()
+	try:
+	        self.__nmea = NMEA.NMEA()
+	        self.__nmea.speedunits = "%.2f mph"
+	        self.__nmea.speedmultiplier = 1.152
+	        self.__nmea.speed = 1
+	        self.__nmea.altitudemultiplier = 1.00
+	        self.__nmea.altitudeunits = "%.2f meters"
+	        self.__nmea.altitude = 5.7
+	except:
+		pass
         self.semaphore.release()
         self.running = 1
         #call the super constructor
