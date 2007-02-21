@@ -16,7 +16,7 @@ ACCELEROMETER_MODULE = 0x80
 ACCELEROMETER_DATA = 33
 
 SAMPLES_PER_MSG = 10
-SAMPLE_RATE = 50
+SAMPLE_RATE = 102.4
 
 EVT_RESULT_ID = wx.NewId()
 
@@ -303,11 +303,11 @@ class BaseStation(wx.Frame):
                         # correlate the samples with time
                         # FIXME: this is only an estimate based on the reception time of the sample.
                         for i in range(len(accel0)):
-                            t = time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE)
+                            t = time_rx - (SAMPLES_PER_MSG-1-i)*1/float(SAMPLE_RATE)
                             d0.append((t, accel0[i]))
                             d1.append((t, accel1[i]))
                             d2.append((t, accel2[i]))
-                            nodes[src_addr]['file'].write('%f\t%d\t%d\t%d\n'%(time_rx - (SAMPLES_PER_MSG-i)*1/float(SAMPLE_RATE), accel0[i], accel1[i], accel2[i]))
+                            nodes[src_addr]['file'].write('%f\t%d\t%d\t%d\n'%(time_rx - (SAMPLES_PER_MSG-i-1)*1/float(SAMPLE_RATE), accel0[i], accel1[i], accel2[i]))
 
                         nodes[src_addr]['last_seen'] = time_rx
                         if not self.gpsfile:
