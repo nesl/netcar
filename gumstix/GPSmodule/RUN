@@ -1,4 +1,5 @@
 #!/bin/sh
-cd /home/GPSmodule
-/usr/bin/python /home/GPSmodule/MainProg.py
+cd /usr/bin/GPSmodule
+/usr/bin/python /usr/bin/GPSmodule/timeset.py
+/usr/bin/python /usr/bin/GPSmodule/MainProg.py
 killall pppd

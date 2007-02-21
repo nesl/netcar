@@ -120,7 +120,7 @@ class GPSmodule:
         		print "GPS is not valid b"
                     GPSXMLqueue.put(XML,True,0.5)
                 else:
-		    print "something happens"
+		    #print "something happens"
                     pass
             except:
                 print "You're missing GPS data because QUEUE is full or not valid XML"

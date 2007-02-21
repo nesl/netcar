@@ -59,7 +59,8 @@ class GpsThread ( threading.Thread):
 	            self.__nmea.ZCH = 0
 	except:
 		#print "man you were wrong"
-		logger.info('cannot find GPS satellites')
+		#logger.info('cannot find GPS satellites')
+		pass
         self.semaphore.release()
 
     def getCoordinates(self):
@@ -77,6 +78,7 @@ class GpsThread ( threading.Thread):
 	try:
         	t = self.__nmea.time
 	except:
+		logger.info('cannot find GPS satellites')
 		pass
         self.semaphore.release()
         return t
@@ -141,4 +143,9 @@ class GpsThread ( threading.Thread):
             #print nmea.lat, nmea.lon, (nmea.speedunits % (nmea.speed * nmea.speedmultiplier))
             #print "time: %s UTC satelites: %d"%(nmea.time, nmea.satellites)
             #print nmea.ss, nmea.zs, nmea.zv
-    
+
+    def stop(self):
+	print "exit gps module"
+	self.running=0
+	sys.exit(1)
+	    
