@@ -1,0 +1,11 @@
+#!/bin/bash
+GUM_ID_FILE=netcarID
+GUM_ID=$1
+GUM_RFS=/home/kimyh/gumstix-buildroot/build_arm_nofpu/root/etc/netcarinit/
+
+rm -rf ./$GUM_ID_FILE
+touch $GUM_ID_FILE
+echo $GUM_ID >> $GUM_ID_FILE
+cp $GUM_ID_FILE $GUM_RFS
+rm rootfs.arm_nofpu.jffs2
+make

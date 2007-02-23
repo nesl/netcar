@@ -1,4 +1,3 @@
-# -*- coding: cp949 -*-
 def sendGMail(user, pw, to, subject, text, files=[], server='smtp.gmail.com'): 
    """ 
    Send files using GMail.
