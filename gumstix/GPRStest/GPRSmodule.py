@@ -8,6 +8,14 @@ import math
 
 ## Each Module has a Queue in it.
 GPRSXMLqueue = Queue.Queue(20)
+
+# Read Bluetooth MAC ID
+#netcarID = os.popen("/usr/bin/hcitool dev")
+#netcarID = netcarID.read()
+#netcarID = netcarID.split()
+#netcarID = netcarID[2]
+
+# Bluetooth is not available
 netcarID = "Test1"
 
 class GPRSmodule:
@@ -43,9 +51,9 @@ class GPRSmodule:
         self.DY = self.DY[2]+'-'+self.DY[1]+'-'+self.DY[0]
         self.TimeConvert = self.DY+' '+self.DZ[1]
         self.XML = self.XML + self.fieldOPEN + "TimeStamp" + self.fieldOPEN2 + "%s"%self.TimeConvert + self.fieldCLOSE   ## DD/MM/YYYY HH:MM:SS(GPS) -> YYYY-MM-DD HH:MM:SS(sensorbase)
-        self.XML = self.XML + self.fieldOPEN + "UID" + self.fieldOPEN2 + "%d"%UID + self.fieldCLOSE 
-        self.XML = self.XML + self.fieldOPEN + "Bing" + self.fieldOPEN2 + "%d"%Bing + self.fieldCLOSE 
-        self.XML = self.XML + self.fieldOPEN + "Ping" + self.fieldOPEN2 + "%d"%Ping + self.fieldCLOSE 
+        self.XML = self.XML + self.fieldOPEN + "UID" + self.fieldOPEN2 + "%s"%UID + self.fieldCLOSE 
+        self.XML = self.XML + self.fieldOPEN + "Bing" + self.fieldOPEN2 + "%s"%Bing + self.fieldCLOSE 
+        self.XML = self.XML + self.fieldOPEN + "Ping" + self.fieldOPEN2 + "%s"%Ping + self.fieldCLOSE 
         self.XML = self.XML + self.rowCLOSE + self.tableCLOSE
         #print self.XML
         return self.XML
@@ -70,12 +78,13 @@ class GPRSmodule:
 ## Assumption : There is only one type
 
 if(__name__ == "__main__"):
-    Dummy = GPSmodule()
+    Dummy = GPRSmodule()
     time.sleep(5)
     while True:
         try:
 		print GPRSXMLqueue.get(True,3)
 	except:
+		print "HAHA"
 		pass
         time.sleep(0.1)
     

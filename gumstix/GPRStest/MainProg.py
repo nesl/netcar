@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-import GPSmodule
+import GPRSmodule
 import SlogModule
 import time
 import os
@@ -9,16 +9,16 @@ import os
 
 if(__name__ == "__main__"):
     #os.popen("sossrv -s /dev/ttyS0&")
-    os.popen("pppd call gprs&")
-    time.sleep(10)
-    GPS = GPSmodule
+    #os.popen("pppd call gprs&")
+    #time.sleep(10)
+    GPRS = GPRSmodule
     SLOG = SlogModule.DataSlog()
-    GPS.GPSmodule()
+    GPRS.GPRSmodule()
     time.sleep(5)
     while True:
-        SLOG.ChangeDB('kimyh@ucla.edu','password','85','GPS')
+        SLOG.ChangeDB('kimyh@ucla.edu','password','85','GPRS')
 	try:
-		XML = GPS.GPSXMLqueue.get(True,1)
+		XML = GPRS.GPRSXMLqueue.get(True,1)
 		SLOG.ChangeXML(XML)
 		Result = SLOG.Slog()
 	except: 
