@@ -32,11 +32,16 @@ def sendGMail(user, pw, to, subject, text, files=[], server='smtp.gmail.com'):
       Encoders.encode_base64(part) 
       part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(file)) 
       msg.attach(part) 
-   # Connecting... 
-   smtp = smtplib.SMTP(server) 
+   # Connecting...
+   print "BBB" 
+   smtp = smtplib.SMTP(server,465) 
+   print "a"
    smtp.ehlo() 
+   print "b"
    smtp.starttls() 
+   print "c"
    smtp.ehlo() 
+   print "d"
    smtp.login(user, pw) 
    print "Login succeed" 
    try : 
