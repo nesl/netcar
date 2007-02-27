@@ -15,7 +15,7 @@ password = 'password'
 project_id = '85'
 table_name = 'GPRS'
 #UID,Altitude,Latitude,Longitude,Speed,Precision,TimeStamp,Ping,Bing
-fields = 'Altitude,Latitude,Longitude,Speed,Precision,TimeStamp,UID,Bing'
+fields = 'Altitude,Latitude,Longitude,Speed,Precision,TimeStamp,UID'
 tables = "p_%s_%s"%(project_id,table_name)
 condition = 1
 #condition = "Altitude > 100"
@@ -36,7 +36,7 @@ def hl():
 hl()
 
 db = open('GPRSbing.csv','w')
-db.write('Altitude, Latitude, Longitude, Speed, Precision, TimeStamp, UID, Bing\n')
+#db.write('Altitude,Latitude,Longitude,Speed,Precision,TimeStamp,UID,Bing\n')
 db.write(data)
 db.close()
 
@@ -50,26 +50,27 @@ f.write('<visibility>1</visibility>\n')
 
 data = csv.reader(open('GPRSbing.csv'))
 
-for Altitude in data:
+for Altitude,Latitude,Longitude,Speed,Precision,TimeStamp,UID in data:
     print Altitude
-    
-for Altitude, Latitude, Longitude, Speed,Precision,TimeStamp,UID,Bing in data:
-
-    try:
-	    f.write('\t\t<Placemark>\n')
-	    f.write('\t\t\t<name>%s</name>\n' % UID)
-	    f.write('\t\t\t<description>Time: %s<br /> Altitude: %s m<br /> Speed: %s <br /> %s </description>\n' %(TimeStamp,Altitude,Speed,Bing))
-	    f.write('\t\t\t<View>\n')
-	    f.write('\t\t\t\t<longitude>%s</longitude>\n' % Longitude)
-	    f.write('\t\t\t\t<latitude>%s</latitude>\n' % Latitude)
-	    f.write('\t\t\t</View>\n')
-	    f.write('\t\t\t<visibility>1</visibility>\n')
-	    #f.write('\t\t\t<styleUrl>root://styleMaps#default?iconId=0x307</styleUrl>\n')
-	    f.write('\t\t\t<Point><coordinates>%s,%s,45</coordinates></Point>\n' % (Longitude,Latitude) )
-	    f.write('\t\t</Placemark>\n')
-
-    except:
-	    pass
+#    break
+##    
+##for Altitude, Latitude, Longitude, Speed,Precision,TimeStamp,UID,Bing in data:
+##
+##    try:
+##	    f.write('\t\t<Placemark>\n')
+##	    f.write('\t\t\t<name>%s</name>\n' % UID)
+##	    f.write('\t\t\t<description>Time: %s<br /> Altitude: %s m<br /> Speed: %s <br /> %s </description>\n' %(TimeStamp,Altitude,Speed,Bing))
+##	    f.write('\t\t\t<View>\n')
+##	    f.write('\t\t\t\t<longitude>%s</longitude>\n' % Longitude)
+##	    f.write('\t\t\t\t<latitude>%s</latitude>\n' % Latitude)
+##	    f.write('\t\t\t</View>\n')
+##	    f.write('\t\t\t<visibility>1</visibility>\n')
+##	    #f.write('\t\t\t<styleUrl>root://styleMaps#default?iconId=0x307</styleUrl>\n')
+##	    f.write('\t\t\t<Point><coordinates>%s,%s,45</coordinates></Point>\n' % (Longitude,Latitude) )
+##	    f.write('\t\t</Placemark>\n')
+##
+##    except:
+##	    pass
     
 f.write('</Folder>\n')
 f.write('</kml>')
