@@ -1,8 +1,0 @@
-Table : Accel
-Sensor : Accel
-AccelX : Float
-AccelY : Float
-AccelZ : Float
-SID : Integer
-TimeStamp : DateTime
-UID : Integer
