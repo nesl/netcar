@@ -68,12 +68,17 @@ class GPRSmodule:
                 bing=os.popen("/bin/bing -c 2 -e 2 192.168.1.3 ericsson.com")
                 ping=os.popen("/bin/ping -c 2 ericsson.com")
             except:
+                print "Whoops"
                 pass
             (lat,lon,alt) = GPS.getCoordinates()
-       	    XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSpeed(), GPS.getTime(), netcarID, bing.read(), ping.read())
-            GPRSXMLqueue.put(XML,True,0.5)
+            try:
+       	        XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSpeed(), GPS.getTime(), netcarID, bing.read(), ping.read())
+                GPRSXMLqueue.put(XML,True,0.5)
+            except:
+                print "GPRS failure?"
+                pass
             ed = time.time() - st
-            time.sleep(20-ed)
+            time.sleep(30-ed)
 
 ## Assumption : There is only one type
 
