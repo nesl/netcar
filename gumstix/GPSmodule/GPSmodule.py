@@ -6,6 +6,10 @@ import Queue
 import thread
 import math
 
+dummy = open('/etc/netcarinit/netcarID')
+netcarID = dummy.read()
+dummy.close()
+
 ## Each Module has a Queue in it.
 GPSXMLqueue = Queue.Queue(20)
 # Assume Earth's diameter : 40008km
@@ -84,7 +88,7 @@ class GPSmodule:
                 self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%s"%self.TimeConvert + self.fieldCLOSE   ## DD/MM/YYYY HH:MM:SS(GPS) -> YYYY-MM-DD HH:MM:SS(sensorbase)
             elif 'UID' in item:
                 temp = item.split(" : ")
-                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%d"%UID + self.fieldCLOSE 
+                self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%s"%UID + self.fieldCLOSE 
             elif 'SID' in item:
                 temp = item.split(" : ")
                 self.XML = self.XML + self.fieldOPEN + temp[0] + self.fieldOPEN2 + "%d"%SID + self.fieldCLOSE 
@@ -114,7 +118,7 @@ class GPSmodule:
                     GPSXMLqueue.put(XML,True,0.5)
                 elif  DiffDegree > DIFF:
         	    try: 
-                    	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+                    	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), netcarID, 10)
                         self.PREVIOUS = [lat,lon]
         	    except:
         		print "GPS is not valid b"
