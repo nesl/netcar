@@ -6,9 +6,18 @@ import Queue
 import thread
 import math
 
+
+#read Net Car ID
 dummy = open('/etc/netcarinit/netcarID')
 netcarID = dummy.read()
 dummy.close()
+
+#DB ID, PASSWORD, PROJECT ID, NAME
+email='kimyh@ucla.edu'
+password = 'password'
+project = 85
+table = 'GPS'
+Tag = (email,password,project,table)
 
 ## Each Module has a Queue in it.
 GPSXMLqueue = Queue.Queue(20)
@@ -111,18 +120,18 @@ class GPSmodule:
             try:
                 if self.PREVIOUS == None:
         	    try: 
-                    	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), 10, 10)
+                    	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), netcarID, 10)
                         self.PREVIOUS = [lat,lon]
         	    except:
         		print "GPS is not valid a"
-                    GPSXMLqueue.put(XML,True,0.5)
+                    GPSXMLqueue.put((Tag,XML),True,0.5)
                 elif  DiffDegree > DIFF:
         	    try: 
                     	XML = self.MakeXML(alt,lat,lon,GPS.getPDOP(), GPS.getSatellites(), GPS.getSpeed(), GPS.getTime(), netcarID, 10)
                         self.PREVIOUS = [lat,lon]
         	    except:
         		print "GPS is not valid b"
-                    GPSXMLqueue.put(XML,True,0.5)
+                    GPSXMLqueue.put((Tag,XML),True,0.5)
                 else:
 		    #print "something happens"
                     pass
