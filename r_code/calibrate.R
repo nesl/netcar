@@ -1,6 +1,6 @@
+calibrate = function(fileName, dataSize) {
 # This function calibrates the dataset
 # It requires the name of the file and the size of dataset
-calibrate = function(fileName, dataSize) {
 
   # Denote the initial calibration time
   START = 10

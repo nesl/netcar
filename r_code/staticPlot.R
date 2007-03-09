@@ -1,6 +1,7 @@
+staticPlot = function(fileName, dataSize){
 # This code simply plots a graph of the all three acceleration components
 # Specify the file name and the data size to analysis
-staticPlot = function(fileName, dataSize){
+  
   # List of variables used in this function
   data_min = 0
   data_max = 0
