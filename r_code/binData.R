@@ -1,4 +1,4 @@
-bindata = function(data, maxTime) {
+binData = function(data, maxTime) {
         # size of the bins over which we average
         binsize = 0.05
 
@@ -9,10 +9,11 @@ bindata = function(data, maxTime) {
         binaccel0 = sapply(split(data$accel0, numintervals), mean)
         binaccel1 = sapply(split(data$accel1, numintervals), mean)
         binaccel2 = sapply(split(data$accel2, numintervals), mean)
-        times = as.numeric(names(binaccel0))*0.05
+        datatimes = as.numeric(names(binaccel0))*binsize
         
         y = data.frame(time=times, accel0 = rep(NA, length(times)), accel1 = rep(NA, length(times)), accel2 = rep(NA, length(times)))
-        y$accel0[times] = binaccel0
-        y$accel1[times] = binaccel1
-        y$accel2[times] = binaccel2
+        y$accel0[datatimes] = binaccel0
+        y$accel1[datatimes] = binaccel1
+        y$accel2[datatimes] = binaccel2
+        y
 }
