@@ -9,7 +9,7 @@ binData = function(data, maxTime) {
         binaccel0 = sapply(split(data$accel0, numintervals), mean)
         binaccel1 = sapply(split(data$accel1, numintervals), mean)
         binaccel2 = sapply(split(data$accel2, numintervals), mean)
-        datatimes = as.numeric(names(binaccel0))*binsize
+        datatimes = as.numeric(names(binaccel0))
         
         y = data.frame(time=times, accel0 = rep(NA, length(times)), accel1 = rep(NA, length(times)), accel2 = rep(NA, length(times)))
         y$accel0[datatimes] = binaccel0

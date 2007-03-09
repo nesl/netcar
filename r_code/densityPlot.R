@@ -14,7 +14,7 @@ densityPlot = function(dataFile, eventFile, dataSize) {
   event = read.table(eventFile, sep = "\t", header = TRUE)
 
   # Calling mark's function on all the valid events 
-  data$event = 0  
+  data$event = factor()  
   for(i in 1:nrow(event)){
     # If we have run out of data, quit
     if (event[i,1] > data[length(data$time),1])
