@@ -56,7 +56,7 @@ calibrate = function(fileName, dataSize) {
 
   # calculate the mean of the first samples for calibration
   datacalib = mean(data[START:STARTEND,])
-  
+
   # calibrate the data
   data$accel0 = H34C_CALIB * (data$accel0 - datacalib["accel0"])
   data$accel1 = H34C_CALIB * (data$accel1 - datacalib["accel1"])
