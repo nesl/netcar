@@ -2,6 +2,7 @@
 # It requires the file with the data, file with the events and the size of data
 densityFunc = function(dataFile, eventFile, dataSize) {
 
+  # define which events this should do the plotting for
   EVENT1 = 3
   EVENT2 = 4
   
