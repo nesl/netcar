@@ -14,3 +14,4 @@ correlationPlot = function() {
         bd3 = binData(d3, maxTime)
 
         pairs(cbind(bd1$accel0, bd2$accel0, bd3$accel0), c("node1", "node2", "node3"), xlim=range(-1,1), ylim=range(-1,1), title="Accel0")
+      }

@@ -32,19 +32,21 @@ calibrate = function(fileName, dataSize) {
   # The initial values are kept as unchanged
   data_set[1:START] = TRUE
 
+  valid = START
   for(i in START:(length(data$time) - 1)) {
     # assume that the data point at START is a valid data point
     # remove the next data point if it is smaller than this data point
-    if(data$time[i] > data$time[i + 1]) {
+    if(data$time[valid] > data$time[i + 1]) {
       data_set[i + 1] = FALSE
     }
     # remove the next data point if it is bigger than the allowed THRESHOLD
     # The THRESHOLD is used to account for packet lossese 
-    else if((data$time[i] - data$time[i + 1]) > THRESHOLD) {
+    else if((data$time[i + 1] - data$time[valid]) > THRESHOLD) {
       data_set[i + 1] = FALSE
     }
     # else this is a good data sample
     else {
+      valid = i + 1
       data_set[i + 1] = TRUE
     }
   }

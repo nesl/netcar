@@ -18,9 +18,12 @@ staticPlot = function(fileName, dataSize){
   plot(data$time, data$accel0, type = "n", xlim = xlimit, ylim = ylimit)
   # Plot ac0
   points(data$time, data$accel0, col = "blue",type = "l")
+  #points(data$time, data$accel0, col = "blue")
   # Plot ac1
   points(data$time, data$accel1, col = "red", type = "l")
+  #points(data$time, data$accel1, col = "red")
   # Plot ac2
   points(data$time, data$accel2, col = "black", type = "l")
+  #points(data$time, data$accel2, col = "black")
   #pairs(cbind(ac0,ac1,ac2))
 }

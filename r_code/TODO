@@ -1,4 +1,5 @@
--find how many sensors we need	-coloring the events in the correlation plot
+-find how many sensors we need	
+	-coloring the events in the correlation plot
 	-find the optimal number of sensors needed
 - find the optimal width for different events
 - look at the pot hole detections and bumps
