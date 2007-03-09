@@ -3,7 +3,8 @@
 calibrate = function(fileName, dataSize) {
 
   # Denote the initial calibration time
-  START = 100
+  START = 10
+  STARTEND = 500
   # Used for corruption of data packets
   MAX_ACCEL = 1024
   # Used for corruption of time stamp
@@ -18,6 +19,7 @@ calibrate = function(fileName, dataSize) {
   # remove bogus data based on corruption of acceleration data
   # Any acceleration value greater than MAX_ACCEL is removed
   data = data[data$accel0 <= MAX_ACCEL & data$accel1 <= MAX_ACCEL & data$accel2 <= MAX_ACCEL,]
+  data = data[data$accel0 > 0 & data$accel1 > 0 & data$accel2 > 0,]
 
   # remove bogus data based on corruption of time stamp
   # compute a matrix of TRUE and FALSE which is typically TRUE
@@ -51,7 +53,7 @@ calibrate = function(fileName, dataSize) {
   data = data[data_set == TRUE,]
 
   # calculate the mean of the first samples for calibration
-  datacalib = mean(data[1:START,])
+  datacalib = mean(data[START:STARTEND,])
   
   # calibrate the data
   data$accel0 = H34C_CALIB * (data$accel0 - datacalib["accel0"])
