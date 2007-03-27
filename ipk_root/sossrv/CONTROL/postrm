@@ -1,3 +1,4 @@
 #!/bin/sh
 rm -rf /usr/bin/sossrv
+rm -rf /usr/bin/sos_tool
 return 0

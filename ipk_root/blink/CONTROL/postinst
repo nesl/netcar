@@ -1,0 +1,5 @@
+#!/bin/sh
+sossrv -s /dev/ttyS2 &
+sos_tool -insmod /usr/sos_module/blink.mlf
+killall sossrv
+return 0

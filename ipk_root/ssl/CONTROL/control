@@ -1,0 +1,9 @@
+Package: openssl
+Priority: optional
+Version: 0.0.1
+Architecture: arm
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+Depends: 
+Section: misc
+Source: http://www.seas.ucla.edu/~kimy
+Description: This is just a ssl executable.

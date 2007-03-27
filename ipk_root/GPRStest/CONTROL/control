@@ -1,9 +1,9 @@
-Package: netcargps
+Package: netcargprs
 Priority: optional
-Version: 0.0.9
+Version: 0.0.1
 Architecture: arm
 Maintainer: Younghun Kim <kimyh@ucla.edu>
-Depends: 
+Depends: bing
 Section: misc
 Source: http://projects.nesl.ucla.edu/netcar
-Description: GPS slogging Application modified :: detect difference.+Debug LOG sending
+Description: GPRS bing, ping and slog them

@@ -1,0 +1,4 @@
+#!/bin/sh
+#rm -rf /home/GPSmodule
+#rf -rf /home/GPSnew
+return 0

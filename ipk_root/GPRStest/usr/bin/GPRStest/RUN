@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /usr/bin/GPRStest
+/usr/bin/python /usr/bin/GPRStest/MainProg.py
+killall pppd

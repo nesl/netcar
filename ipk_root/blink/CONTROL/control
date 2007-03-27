@@ -1,0 +1,9 @@
+Package: micazblink
+Priority: optional
+Version: 0.0.1
+Architecture: all
+Maintainer: Younghun Kim <kimyh@ucla.edu>
+Depends: sossrv 
+Section: misc
+Source: http://sos.nesl.ucla.edu
+Description: Attempt to dynamic uploading: micaZ

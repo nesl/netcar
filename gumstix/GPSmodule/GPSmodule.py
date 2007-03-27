@@ -6,6 +6,19 @@ import Queue
 import thread
 import math
 
+#Logging setting
+import logging
+logger = logging.getLogger('SlogModule')
+hdlr = logging.FileHandler('/home/SlogModule.log')
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO)
+
+#logger.warning('a warning message')
+#logger.info('a log message')
+
+
 
 #read Net Car ID
 dummy = open('/etc/netcarinit/netcarID')
@@ -20,7 +33,7 @@ table = 'GPS'
 Tag = (email,password,project,table)
 
 ## Each Module has a Queue in it.
-GPSXMLqueue = Queue.Queue(20)
+GPSXMLqueue = Queue.Queue(200)
 # Assume Earth's diameter : 40008km
 # 40008km : 360 = 100m : 8.99820026*10^-4 :: Longitude 1 degree = 111133.3333m
 # 40008km : 180 = 100m : 4.49910018*10^-4 :: Latitude 1 degree = 222266.6667m
@@ -133,7 +146,7 @@ class GPSmodule:
         		print "GPS is not valid b"
                     GPSXMLqueue.put((Tag,XML),True,0.5)
                 else:
-		    #print "something happens"
+		    logger.warning('GPS : GPS is not available')
                     pass
             except:
                 print "You're missing GPS data because QUEUE is full or not valid XML"

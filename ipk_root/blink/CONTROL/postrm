@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -rf /usr/sos_module/blink.mlf
+return 0
