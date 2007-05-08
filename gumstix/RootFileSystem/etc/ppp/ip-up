@@ -1,0 +1,3 @@
+#!/bin/sh
+cp /etc/ppp/resolv.conf /etc
+chmod 644 /etc/resolv.conf
