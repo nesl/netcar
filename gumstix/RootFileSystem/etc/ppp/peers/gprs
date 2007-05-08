@@ -9,7 +9,7 @@
 
 # Most GPRS phones don't reply to LCP echo's
 lcp-echo-failure 0
-lcp-echo-interval 0
+lcp-echo-interval 30
 
 # Keep pppd attached to the terminal:
 # Comment this to get daemon mode pppd
