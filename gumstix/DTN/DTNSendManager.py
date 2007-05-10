@@ -34,15 +34,18 @@
 
 import queue
 import message
+import connection
+
 import time
 import threading
 import sys
 
 #setup the logging system
 import logging
-logging.basicConfig()
-log = logging.getLogger("DTNSendManager")
-log.setLevel(logging.DEBUG)
+
+#some configurations
+SERVER = "suisse"
+PORT = 14000
 
 class DTNSendManager(threading.Thread):
     """
@@ -53,7 +56,7 @@ class DTNSendManager(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self._queues = []
-        pass
+        self._connection = connection.SocketConnection(SERVER, PORT)
 
     def addQueue(self, q):
         """ Add a queue to the queuelist. """
@@ -72,7 +75,11 @@ class DTNSendManager(threading.Thread):
                     if not q.isEmpty():
                         sentElement = True
                         log.debug("Preparing message: %s"%(q.getNext(),))
-                        q.removeNext()
+                        if self._connection.sendMessage(q.getNext()):
+                            log.debug("Message successfully sent")
+                            q.removeNext()
+                        else:
+                            log.debug("Couldn't send message")
             if not sentElement:
                 # we want to wait if we didn't send anything in order to not 
                 # create a busy loop.
@@ -81,6 +88,9 @@ class DTNSendManager(threading.Thread):
 
 
 if __name__ == "__main__":
+    logging.basicConfig()
+    log = logging.getLogger("DTNSendManager")
+    log.setLevel(logging.DEBUG)
     log.info("Starting...")
     dtns = DTNSendManager()
     dtns.start()
@@ -92,9 +102,10 @@ if __name__ == "__main__":
     msg = message.Message(1, "testmessage")
     fq.addMessage(msg)
     dtns.addQueue(fq)
-    
-    time.sleep(5)
-    log.debug("adding messages again...")
-    fq.addMessage(msg)
-    fq.addMessage(msg)
-    fq.addMessage(msg)
+    counter = 1
+    while 1: 
+        time.sleep(5)
+        log.debug("adding messages again...")
+        msg = message.Message(1, "testmessage %d"%(counter,))
+        counter += 1
+        fq.addMessage(msg)
