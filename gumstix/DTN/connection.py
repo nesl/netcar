@@ -52,8 +52,8 @@ class SocketConnection(Connection):
                 # sleep for a little to avoid a busy loop
                 time.sleep(0.5)
         try:
-            # send the message
-            self._s.send(msg.encode()+"\n")
+            # send the message encapsulated into a normal message.
+            self._s.send(message.Message(msgType=msg.getType(), content=msg.encode()).encode()+"\n")
             line = self._file.readline().strip()
             if line != "OK":
                 return False

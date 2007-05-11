@@ -37,7 +37,7 @@ import logging
 
 #following is the list of know messages.
 BASE_MESSAGE = 1
-LOCATION_LOGGING_MESSAGE = 2
+GPS_MESSAGE = 2
 
 class Message:
     """
@@ -73,3 +73,28 @@ class Message:
 
     def __str__(self):
         return "type: %d, content: %s"%(self._msgType, self._content)
+
+class GPSMessage:
+    """
+        This message represents a gps location packet.
+    """
+    def __init__(self, lat, lon, alt, precision, satellites, speed, time):
+        self._lat = lat
+        self._lon = lon
+        self._alt = alt
+        self._precision = precision
+        self._satellites = satellites
+        self._speed = speed
+        self._time = time                   
+
+    def encode(self):
+        return struct.pack("!%f%f%f%f%B%f%%f", self._lat, self._lon, self._alt, self._precision, self._satellites, self._speed, self._time)
+
+    def decode(self, msg):
+        (self._lat, self._lon, self._alt, self._precision, self._satellites, self._speed, self._time) = struct.unpack("!%f%f%f%f%B%f%%f", msg)
+
+    def getType(self):
+        return GPS_MESSAGE
+
+    def __str__(self):
+        return "lat: %f, lon: %f, alt: %f, precision: %f, satellites: %d, speed: %f, time: %f"%(self._lat, self._lon, self._alt, self._precision, self._satellites, self._speed, self._time)
