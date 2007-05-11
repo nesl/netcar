@@ -2,6 +2,8 @@ import socket
 import time
 import logging
 
+from Modules import module
+
 class Connection:
     """
         This class is a generic example for a connection. Future connection
@@ -11,14 +13,22 @@ class Connection:
         self._log = logging.getLogger("Connection")
         self._log.setLevel(logging.DEBUG)
 
+        self._modules = {}
+
     def sendMessage(self, msg):
         self._log.debug("Sending message %s"%(msg,))
+
+    def registerModule(self, m):
+        if isinstance(m, module.BaseModule):
+            self._log.debug("Register module %s"%(m,))
+            self._modules[m.getMessageType()] = m.getReceiveFunction()
 
 class SocketConnection(Connection):
     """
         This class implements a socket connection to a server.
     """
     def __init__(self, server, port):
+        Connection.__init__(self)
         self._log = logging.getLogger("SocketConnection")
         self._log.setLevel(logging.DEBUG)
 
@@ -60,6 +70,7 @@ class SocketConnection(Connection):
     def connect(self):
         """ Connect to the server and do error handling if the connection failed. """
         try:
+            #make sure an old connection is closed.
             self._s.close()
             self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             #set the timeout of the socket

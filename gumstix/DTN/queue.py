@@ -34,6 +34,7 @@
 
 import Queue as pyQueue
 import message
+import threading
 
 class Queue:
     """ 
@@ -70,29 +71,39 @@ class FIFOQueue(Queue):
         self._log.setLevel(logging.DEBUG)
 
         self._queue = []
+        self._queueSemaphore = threading.Semaphore()
     
     def isEmpty(self):
+        self._log.debug("in isEmpty")
+        self._queueSemaphore.acquire()
+        ret = False
         if len(self._queue) == 0:
-            return True
-        else:
-            return False
+            ret = True
+        self._queueSemaphore.release()
+        return ret
 
     def getNext(self):
+        ret = None
         if not self.isEmpty():
-            return self._queue[0]
-        else:
-            return None
+            self._queueSemaphore.acquire()
+            ret = self._queue[0]
+            self._queueSemaphore.release()
+        return ret
 
     def removeNext(self):
         if not self.isEmpty():
+            self._queueSemaphore.acquire()
             if len(self._queue) == 1:
                 self._queue = []
             else:
                 self._queue = self._queue[1:]
+            self._queueSemaphore.release()
         self._log.debug("removeNext: queue size now %d"%(len(self._queue), ))
 
     def addMessage(self, msg):
         if isinstance(msg, message.Message):
+            self._queueSemaphore.acquire()
             self._queue.append(msg)
+            self._queueSemaphore.release()
             self._log.debug("addMessage: queue size now %d"%(len(self._queue), ))
 

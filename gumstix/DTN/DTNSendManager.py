@@ -36,6 +36,8 @@ import queue
 import message
 import connection
 
+from Modules import module
+
 import time
 import threading
 import sys
@@ -53,16 +55,27 @@ class DTNSendManager(threading.Thread):
     that it polls periodically. If there is something in the queue, it will
     send it to the server.
     """
-    def __init__(self):
+    def __init__(self, server, port):
         threading.Thread.__init__(self)
+        self._log = logging.getLogger("DTNSendManager")
+        self._log.setLevel(logging.DEBUG)
+
+
+        self._server = server
+        self._port = port
         self._queues = []
-        self._connection = connection.SocketConnection(SERVER, PORT)
+        self._connection = connection.SocketConnection(self._server, self._port)
 
     def addQueue(self, q):
         """ Add a queue to the queuelist. """
         if isinstance(q, queue.Queue):
-            log.debug("adding queue %s to the queue list."%(str(q),))
+            self._log.debug("adding queue %s to the queue list."%(str(q),))
             self._queues.append(q)
+
+    def registerModule(self, m):
+        if isinstance(m, module.BaseModule):
+            self.addQueue(m.getQueue())
+            self._connection.registerModule(m)
     
     def run(self):
         """ This is the run method of the thread. """
@@ -74,38 +87,22 @@ class DTNSendManager(threading.Thread):
                     # if the queue isn't empty, send the data to the server.
                     if not q.isEmpty():
                         sentElement = True
-                        log.debug("Preparing message: %s"%(q.getNext(),))
+                        self._log.debug("Preparing message: %s"%(q.getNext(),))
                         if self._connection.sendMessage(q.getNext()):
-                            log.debug("Message successfully sent")
+                            self._log.debug("Message successfully sent")
                             q.removeNext()
                         else:
-                            log.debug("Couldn't send message")
+                            self._log.debug("Couldn't send message")
             if not sentElement:
                 # we want to wait if we didn't send anything in order to not 
                 # create a busy loop.
-                log.debug("nothing to do...")
+                self._log.debug("nothing to do...")
                 time.sleep(1)
 
 
 if __name__ == "__main__":
     logging.basicConfig()
-    log = logging.getLogger("DTNSendManager")
-    log.setLevel(logging.DEBUG)
-    log.info("Starting...")
-    dtns = DTNSendManager()
+
+    dtns = DTNSendManager(SERVER, PORT)
     dtns.start()
 
-    time.sleep(2)
-    log.debug("Creating FIFOQueue")
-    fq = queue.FIFOQueue()
-    log.debug("Creating messages for queue")
-    msg = message.Message(1, "testmessage")
-    fq.addMessage(msg)
-    dtns.addQueue(fq)
-    counter = 1
-    while 1: 
-        time.sleep(5)
-        log.debug("adding messages again...")
-        msg = message.Message(1, "testmessage %d"%(counter,))
-        counter += 1
-        fq.addMessage(msg)

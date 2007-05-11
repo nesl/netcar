@@ -35,6 +35,10 @@
 import struct
 import logging
 
+#following is the list of know messages.
+BASE_MESSAGE = 1
+LOCATION_LOGGING_MESSAGE = 2
+
 class Message:
     """
         This is the base class for messages. It defines some
@@ -54,12 +58,18 @@ class Message:
             self.decode(msg)
 
     def encode(self):
+        """ Encode the messag into one long string. The headers is <type, length, content>. """
         return struct.pack("!BH%ds"%(len(self._content),), self._msgType, len(self._content), self._content)
 
     def decode(self, msg):
+        """ Decodes a simple message of the format <type, length, content>. """
         (self._msgType, length) = struct.unpack("!BH", msg[0:struct.calcsize("!BH")])
         self._log.debug("len: %d, calcsize: %d, msglen: %d"%(length, struct.calcsize("!BH"), len(msg)))
         (self._content,) = struct.unpack("%ds"%(length,), msg[struct.calcsize("!BH"):])
+
+    def getType(self):
+        """ Return the message type. """
+        return self._msgType
 
     def __str__(self):
         return "type: %d, content: %s"%(self._msgType, self._content)

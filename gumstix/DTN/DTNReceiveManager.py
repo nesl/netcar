@@ -17,6 +17,8 @@ class DTNReceiveManager:
         self._log = logging.getLogger("DTNReceiveManager")
         self._log.setLevel(logging.DEBUG)
 
+        self._modules = {}
+
         self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._s.bind((socket.gethostname(), port))
         self._s.listen(5)
@@ -36,12 +38,23 @@ class DTNReceiveManager:
                 c.shutdown(2)
                 exit(0)
 
+    def registerModule(self, m):
+        if isinstance(m, module.BaseModule):
+            self._log.debug("Register module %s"%(m,))
+            self._modules[m.getMessageType()] = m.getReceiveFunction()
+
     def handleConnection(self, socket, address):
         self.file = socket.makefile("rb")
         while 1:
             try:
                 msg = message.Message(msg=self.file.readline().strip())
+                # execute the registered callback function for the module.
+                if msg.getType() in self._modules.keys():
+                    self._modules[msg.getType()](msg)
+                else:
+                    self._log.debug("No module for type %d"%(msg.getType()))
                 socket.send("OK\n")
+                
             except KeyboardInterrupt:
                 self.file.close()
                 socket.shutdown(2)
