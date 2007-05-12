@@ -44,16 +44,30 @@ class DTNReceiveManager:
             self._modules[m.getMessageType()] = m.getReceiveFunction()
 
     def handleConnection(self, socket, address):
-        self.file = socket.makefile("rb")
         while 1:
             try:
-                msg = message.Message(msg=self.file.readline().strip())
+                while 1:
+                    c = socket.recv(1)
+                    if c == "#":
+                        c = socket.recv(1)
+                        if c == "$":
+                            c = socket.recv(1)
+                            if c == "*":
+                                #found start of frame delimiter!
+                                break
+                header = ""
+		while len(header) < struct.calcsize("!BH"):
+		    header += socket.recv(1)
+                (type, len) = struct.unpack("!BH", header)
+		msg = ""
+		while len(m) < len:
+		    msg += socket.recv(1)
                 # execute the registered callback function for the module.
-                if msg.getType() in self._modules.keys():
-                    self._modules[msg.getType()](msg)
+                if type in self._modules.keys():
+                    self._modules[type](msg)
                 else:
                     self._log.debug("No module for type %d"%(msg.getType()))
-                socket.send("OK\n")
+                #socket.send("OK\n")
                 
             except KeyboardInterrupt:
                 self.file.close()

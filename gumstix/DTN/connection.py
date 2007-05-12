@@ -33,6 +33,8 @@ class SocketConnection(Connection):
         self._log = logging.getLogger("SocketConnection")
         self._log.setLevel(logging.DEBUG)
 
+        self._SFD = "#$*"
+
         self._server = server
         self._port = port
 
@@ -54,10 +56,10 @@ class SocketConnection(Connection):
                 time.sleep(0.5)
         try:
             # send the message encapsulated into a normal message.
-            self._s.send(message.Message(msgType=msg.getType(), content=msg.encode()).encode()+"\n")
-            line = self._file.readline().strip()
-            if line != "OK":
-                return False
+            self._s.send(self._SFD + message.Message(msgType=msg.getType(), content=msg.encode()).encode())
+            #line = self._file.readline().strip()
+            #if line != "OK":
+            #    return False
             return True
         except socket.error, e:
             self._log.error("sendMessage: SocketError: "+str(e))
