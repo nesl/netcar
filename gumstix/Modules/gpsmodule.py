@@ -36,7 +36,7 @@ class LocationLoggingModule(module.BaseModule):
         diff = math.pow((self._lastCoordinates[0] - coordinates[0])*longitude1degree, 2) + math.pow((self._lastCoordinates[1] - coordinates[1]) * latitude1degree, 2)
         self._log.debug("new gps fix: lon %f lat %f alt %f diff from last: %fm "%(coordinates[0], coordinates[1], coordinates[2], diff))
         if diff >= self._delta * self._delta:
-	    self._lastCoordinates = coordinates
+            self._lastCoordinates = coordinates
             msg = message.GPSMessage(lon = coordinates[0], 
                         lat = coordinates[1],
                         alt = coordinates[2],
@@ -48,4 +48,22 @@ class LocationLoggingModule(module.BaseModule):
 
     def run(self):
         """ For now, this thread doesn't do anything periodically. """
+        pass
+
+class LocationDecodingModule(module.BaseModule):
+    """
+        This module decodes gps messages on the receiving side.
+    """
+    def __init__(self):
+        module.BaseModule.__init__(self)
+
+    def getMessageType(self):
+        return message.GPS_MESSAGE
+
+    def receiveMessage(self, msg):
+        gpsMsg = message.GPSMessage(msg=msg)
+        print gpsMsg
+
+    def run(self):
+        """ Nothing to do for now. """
         pass

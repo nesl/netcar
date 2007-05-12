@@ -78,7 +78,7 @@ class GPSMessage(Message):
     """
         This message represents a gps location packet.
     """
-    def __init__(self, lat, lon, alt, precision, satellites, speed, time):
+    def __init__(self, lat=0.0, lon=0.0, alt=0.0, precision=0.0, satellites=-1, speed=0.0, time="?", msg=None):
         self._lat = lat
         self._lon = lon
         self._alt = alt
@@ -86,12 +86,14 @@ class GPSMessage(Message):
         self._satellites = satellites
         self._speed = speed
         self._time = time                   
+        if msg:
+            self.decode(msg)
 
     def encode(self):
         return struct.pack("!ffffBf", self._lat, self._lon, self._alt, self._precision, self._satellites, self._speed) + str(self._time)
 
     def decode(self, msg):
-        (self._lat, self._lon, self._alt, self._precision, self._satellites, self._speed, self._time) = struct.unpack("!ffffBf", msg[0:struct.calcsize("!ffffBf")])
+        (self._lat, self._lon, self._alt, self._precision, self._satellites, self._speed) = struct.unpack("!ffffBf", msg[0:struct.calcsize("!ffffBf")])
 	self._time = msg[struct.calcsize("!ffffBf"):]
 
     def getType(self):

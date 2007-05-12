@@ -3,6 +3,8 @@ import os
 import sys
 import message
 import struct
+from Modules import module
+
 import logging
 logging.basicConfig()
 
@@ -23,7 +25,9 @@ class DTNReceiveManager:
 
         self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #self._s.bind((socket.gethostname(), port))
-        self._s.bind(("128.97.93.10", port))
+        self._s.bind(("", port))
+
+    def start(self):
         self._s.listen(5)
 
         while 1:
