@@ -1,0 +1,8 @@
+#!/bin/bash
+
+mkdir mainsender/usr
+mkdir mainsender/usr/local
+rsync -a --exclude '.svn' ../gumstix/DTN mainsender/usr/local/
+rsync -a --exclude '.svn' ../gumstix/Modules mainsender/usr/local/
+rsync -a --exclude '.svn' ../gumstix/MainSender.py mainsender/usr/local/
+ipkg-build mainsender
