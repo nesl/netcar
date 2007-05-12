@@ -28,6 +28,7 @@ class NMEA:
         self.ZCHseen = 0
         self.LATLON = 0
         self.satellites = 0
+	self.pdop = -1.0
         
     def add_checksum(self,sentence):
         csum = 0
@@ -209,7 +210,8 @@ class NMEA:
 
     def handle_line(self, line):
         if line[0] == '$':
-            line = string.split(line[1:-1], '*')
+	    line = line.strip()
+            line = string.split(line[1:], '*')
             if len(line) != 2: return
             if not self.checksum(line[0], line[1]):
                 return "Bad checksum"
@@ -244,8 +246,9 @@ if __name__ == '__main__':
         "$GPGSV,3,1,09,14,77,023,,21,67,178,,29,64,307,,30,42,095,*7E\n",
         "$GPGSV,3,2,09,05,29,057,,11,15,292,,18,08,150,,23,08,143,*7A\n",
         "$GPGSV,3,3,09,09,05,052,*4B\n",
+	"$GPGGA,182632.921,3403.6875,N,11827.0064,W,1,07,1.1,102.8,M,,,,0000*10\n",
     ]
     for line in lines:
-        nmea.handle_line(line)
+        print nmea.handle_line(line)
     print nmea.__dict__
 

@@ -12,16 +12,17 @@ PORT = 14000
 ########################
 # initialize the modules
 dtns = DTNSendManager.DTNSendManager(SERVER, PORT)
-baseModule = module.BaseModule()
+#baseModule = module.BaseModule()
 
 #this is a special module which handles data from the gps.
-gpsThread = gps.GPSThread('/dev/ttyS1')
+gpsThread = gps.GPSThread('/dev/tty.HOLUXGR-231-SPPslave-1')
+#gpsThread = gps.GPSThread('/dev/ttyS3')
 
 locationLoggingModule = gpsmodule.LocationLoggingModule(gpsThread)
 
 ###################################
 # register modules with DTN Manager
-dtns.registerModule(baseModule)
+#dtns.registerModule(baseModule)
 dtns.registerModule(locationLoggingModule)
 
 ##########################

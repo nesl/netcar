@@ -10,6 +10,7 @@ import os, sys
 from LatLongUTMconversion import LLtoUTM
 import NMEA
 import threading
+import traceback
 
 #Logging setting
 import logging
@@ -21,7 +22,7 @@ class GPSThread ( threading.Thread):
         self._device = device
         self._GPSFixNotificationFunctions = []
         self._log = logging.getLogger("GPS")
-        self._log.setLevel(logging.DEBUG)
+        self._log.setLevel(logging.INFO)
         self.semaphore = threading.Semaphore()
         self.semaphore.acquire()
         # init the nmea module
@@ -34,7 +35,7 @@ class GPSThread ( threading.Thread):
             self.__nmea.altitudeunits = "%.2f meters"
             self.__nmea.altitude = 5.7
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("error in __init__: "+str(e))
         self.semaphore.release()
         self.running = 1
@@ -43,7 +44,9 @@ class GPSThread ( threading.Thread):
     def gpsInput(self, line):
         self.semaphore.acquire()
         try:
-            self.__nmea.handle_line(line)
+            ret = self.__nmea.handle_line(line)
+            if ret:
+                self._log.warning("nmea handle returns: %s"%(ret,))
             if self.__nmea.LATLON:
                 self.__nmea.LATLON = 0
 
@@ -52,7 +55,7 @@ class GPSThread ( threading.Thread):
             if self.__nmea.ZCH:
                 self.__nmea.ZCH = 0
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("gpsInput: bad input: %s"%(e,)) 
         self.semaphore.release()
 
@@ -61,7 +64,7 @@ class GPSThread ( threading.Thread):
         try:
             (long, lat, alt) = (self.__nmea.lat, self.__nmea.lon, self.__nmea.altitude)
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("getCoordinates: %s"%(e,)) 
         self.semaphore.release()
         return (long, lat, alt)
@@ -72,7 +75,7 @@ class GPSThread ( threading.Thread):
         try:
             t = self.__nmea.time
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("getTime: %s"%(e,))
         
         self.semaphore.release()
@@ -81,9 +84,9 @@ class GPSThread ( threading.Thread):
     def getSpeed(self):
         self.semaphore.acquire()
         try:
-            s = (self.__nmea.speedunits % (self.__nmea.speed * self.__nmea.speedmultiplier))
+            s = self.__nmea.speed * self.__nmea.speedmultiplier
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("getSpeed: %s"%(e,))
             
         self.semaphore.release()
@@ -94,7 +97,7 @@ class GPSThread ( threading.Thread):
         try:
             s = self.__nmea.satellites
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("getSatellites: %s"%(e,))
         self.semaphore.release()
         return s
@@ -106,7 +109,7 @@ class GPSThread ( threading.Thread):
             prn = list(self.__nmea.prn)
             in_view = self.__nmea.in_view
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("getSatelliteStatistics: %s"%(e,))
         self.semaphore.release()
         return (ss, prn, in_view)
@@ -117,7 +120,7 @@ class GPSThread ( threading.Thread):
         try:
             s = self.__nmea.pdop
         except:
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("getPDOP: %s"%(e,))
         self.semaphore.release()
         return s
@@ -130,7 +133,7 @@ class GPSThread ( threading.Thread):
         try:
             gpsdev = open(self._device)
         except :
-            e = sys.exec_info()[1]
+            e = sys.exc_info()[1]
             self._log.error("run: %s"%(e,))
             self._log.error("exiting gps thread")
             return
@@ -143,13 +146,16 @@ class GPSThread ( threading.Thread):
                 self.gpsInput(line)
                 #check if it is different from the last fix:
                 currentCoordinates = self.getCoordinates()
+                self._log.debug("Coordinates: "+str(currentCoordinates))
                 if coordinates != currentCoordinates:
                     coordinates = currentCoordinates
                     for f in self._GPSFixNotificationFunctions:
                         # notify the registered functions of the change.
                         f(self)
             except:
-                self._log.warning("decoded strange data. Error %s"%(e,))
+            	e = sys.exc_info()[1]
+		tr = sys.exc_info()[2]
+                self._log.warning("decoded strange data. Error %s\n%s"%(e,traceback.extract_tb(tr)))
                 self._log.warning("string %s"%(line,))
             #print nmea.lat, nmea.lon, (nmea.speedunits % (nmea.speed * nmea.speedmultiplier))
             #print "time: %s UTC satelites: %d"%(nmea.time, nmea.satellites)
