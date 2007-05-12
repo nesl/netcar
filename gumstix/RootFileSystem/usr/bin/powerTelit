@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "GPIO out set" > /proc/gpio/GPIO59
+sleep 5
+echo "GPIO out clear" > /proc/gpio/GPIO59
+

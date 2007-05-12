@@ -1,12 +1,9 @@
 #!/bin/sh
-echo "GPIO out set" > /proc/gpio/GPIO59
-sleep 5
-echo "GPIO out clear" > /proc/gpio/GPIO59
-sleep 120
+sleep 60
 pppd call gprs&
 sleep 15
 ipkg-cl update
 ipkg-cl install netcarroot
 /etc/netcarinit/netcarinit
-killall pppd
-sleep 15
+#killall pppd
+#sleep 15

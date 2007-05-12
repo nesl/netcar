@@ -6,7 +6,7 @@ from Modules.GPS import gps
 import logging
 logging.basicConfig()
 
-SERVER = "suisse"
+SERVER = "128.97.93.10"
 PORT = 14000
 
 ########################

@@ -1,16 +1,18 @@
 #!/bin/bash
-GUM_ID_FILE=netcarID
+GUM_ID_FILE=/build_arm_nofpu/root/etc/netcarinit/netcarID
 GUM_ID=$1
-GUM_RFS=/home/kimyh/gumstix-buildroot/build_arm_nofpu/root/etc/netcarinit/
+GUM_RFS=$HOME/projects/gumstix-buildroot
+OLDDIR=`pwd`
 
 if [ -z "$1" ]
 then
 	echo "PLEASE SPECIFY GUMSTIX ID"
 else
-	rm -rf ./$GUM_ID_FILE
-	touch $GUM_ID_FILE
-	echo $GUM_ID >> $GUM_ID_FILE
-	cp $GUM_ID_FILE $GUM_RFS
+	echo $GUM_ID >> $GUM_RFS/$GUM_ID_FILE
+    rsync -a --exclude '.svn' buildroot/ $GUM_RFS/
+    rsync -a --exclude '.svn' RootFileSystem/ $GUM_RFS/build_arm_nofpu/root/
+    cd $GUM_RFS
 	rm rootfs.arm_nofpu.jffs2
 	make
+    cd $OLDDIR
 fi

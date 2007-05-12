@@ -1,5 +1,6 @@
 import logging
 import threading
+import module
 
 from DTN import queue
 from DTN import message
@@ -7,7 +8,7 @@ from DTN import message
 longitude1meter = 1.0/111133.3333
 latitude1meter = 1.0/222266.6667
 
-class LocationLoggingModule(BaseModule):
+class LocationLoggingModule(module.BaseModule):
     """
         This module send the current location to the server
         whenever it notices that we moved for more than delta
@@ -17,7 +18,7 @@ class LocationLoggingModule(BaseModule):
             gps: this is an instance to the gps thread object so we can
                  register ourselfs as interested in gps fix information.
         """
-        BaseModule.__init__(self)
+        module.BaseModule.__init__(self)
         self._log.setLevel(logging.DEBUG)
         self._queue = queue.FIFOQueue()
         self._lastCoordinates = (0, 0, 0)
@@ -25,8 +26,6 @@ class LocationLoggingModule(BaseModule):
         self._delta = delta
         # register our gps fix function with the gps thread
         gps.registerGPSFixNotificationFunction(self.newGPSFix)
-
-        return d
 
     def getMessageType(self):
         return message.GPS_MESSAGE

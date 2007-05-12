@@ -1,6 +1,7 @@
 import socket
 import time
 import logging
+import message
 
 from Modules import module
 

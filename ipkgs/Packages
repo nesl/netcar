@@ -1,60 +1,6 @@
-Package: bing
-Version: 1.1.3
-Section: comm
-Architecture: arm
-Maintainer: Younghun Kim <kimyh@ucla.edu>
-MD5Sum: 114e9d83c3832b7723930a3b0d0be47a
-Size: 19626
-Filename: bing_1.1.3_arm.ipk
-Source: http://linux.maruhn.com/sec/bing.html
-Description: Bing application
-
-
-Package: netcargps
-Version: 0.0.3
-Section: misc
-Architecture: arm
-Maintainer: Younghun Kim <kimyh@ucla.edu>
-MD5Sum: 36939ab678dd221fa75fabe5072ba8f8
-Size: 9940
-Filename: netcargps_0.0.3_arm.ipk
-Source: http://projects.nesl.ucla.edu/netcar
-Description: GPS slogging Application modified :: detect difference.
-
-
-Package: netcarroot
-Version: 0.0.2
-Section: comm
-Architecture: arm
-Maintainer: Younghun Kim <kimyh@ucla.edu>
-MD5Sum: 8a71d256ae047ce5e52e3d6da284c985
-Size: 1032
-Filename: netcarroot_0.0.2_arm.ipk
-Source: http://www.seas.ucla.edu/~kimy
-Description: This is netcarroot, this main root includes /etc/netcarinit/netcatinit  milestone sciprt will call this script at the end of it. This will install all dependent packages. /etc/netcarinit/run inittab script respawns this run. You may place executable file in it.
-
-
-Package: sossrv
-Version: 1.0
-Section: misc
-Architecture: arm
-Maintainer: Younghun Kim <kimyh@ucla.edu>
-MD5Sum: 6b02ef94b93ad36361277869e40689b1
-Size: 9768
-Filename: sossrv_1.0_arm.ipk
-Source: http://nesl.ee.ucla.edu
-Description: This is a SOS-SERVER application.
-
-
-Package: usbnet
-Version: 0.0.1
-Section: comm
-Architecture: arm
-Maintainer: Younghun Kim <kimyh@ucla.edu>
+Version: none
 MD5Sum: a8bb83377d5fcfba78ceb80bfb9457ab
 Size: 1010
 Filename: usbnet_0.0.1_arm.ipk
-Source: http://www.gumstix.com
-Description: This sets USBnet
 
 

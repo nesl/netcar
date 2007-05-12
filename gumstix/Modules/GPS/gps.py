@@ -14,7 +14,7 @@ import threading
 #Logging setting
 import logging
 
-class GpsThread ( threading.Thread):
+class GPSThread ( threading.Thread):
     # overwrite Thread's __init__ method
     def __init__(self, device):
         threading.Thread.__init__(self)

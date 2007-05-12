@@ -1,14 +1,1 @@
-GPS.table netcargps:arm:./usr/bin/GPSmodule/GPS.table
-GPSDB.form netcargps:arm:./usr/bin/GPSmodule/GPSDB.form
-GPSmodule.py netcargps:arm:./usr/bin/GPSmodule/GPSmodule.py
-LatLongUTMconversion.py netcargps:arm:./usr/bin/GPSmodule/LatLongUTMconversion.py
-MainProg.py netcargps:arm:./usr/bin/GPSmodule/MainProg.py
-NMEA.py netcargps:arm:./usr/bin/GPSmodule/NMEA.py
-RUN netcargps:arm:./usr/bin/GPSmodule/RUN
-SlogModule.py netcargps:arm:./usr/bin/GPSmodule/SlogModule.py
-bing bing:arm:./bin/bing
-gps.py netcargps:arm:./usr/bin/GPSmodule/gps.py
-interfaces usbnet:arm:./etc/network/interfaces
-netcarinit netcarroot:arm:./etc/netcarinit/netcarinit
-run netcarroot:arm:./etc/netcarinit/run
-sossrv sossrv:arm:./usr/bin/sossrv
+interfaces None:None:./etc/network/interfaces
