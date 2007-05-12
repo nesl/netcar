@@ -1,0 +1,9 @@
+Package: mainsender
+Priority: optional
+Version: 0.0.1
+Architecture: arm
+Maintainer: Thomas Schmid <thomas.schmid@ucla.edu>
+Depends: 
+Section: comm
+Source: http://www.citysniff.org/~kimy
+Description: This module installs the main DTN stack and sender application including the different modules. 

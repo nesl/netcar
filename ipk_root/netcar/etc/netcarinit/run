@@ -1,3 +1,6 @@
 #!/bin/sh
 #/home/GPSmodule/RUN
-/usr/bin/GPSmodule/RUN
+#/usr/bin/GPSmodule/RUN
+cd /usr/local/
+/usr/bin/python MainSender.py
+

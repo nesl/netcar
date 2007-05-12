@@ -2,7 +2,8 @@
 /usr/sbin/rdate -s time.nist.gov
 /usr/bin/python /usr/bin/counter.py
 ipkg-cl update
-ipkg-cl install netcargps
-ipkg-cl install bing
+#ipkg-cl install netcargps
+#ipkg-cl install bing
 ipkg-cl install sossrv
-ipkg-cl install opendmtp
+#ipkg-cl install opendmtp
+ipkg-cl install mainsender

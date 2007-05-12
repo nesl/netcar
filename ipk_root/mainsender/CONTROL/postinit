@@ -1,0 +1,5 @@
+#!/bin/sh
+chmod +x /etc/netcarinit/netcarinit
+chmod +x /etc/netcarinit/run
+chmod +x /usr/bin/counter.py
+return 0
