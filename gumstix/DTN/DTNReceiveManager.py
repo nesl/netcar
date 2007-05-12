@@ -1,6 +1,8 @@
 import socket
 import os
+import sys
 import message
+import struct
 import logging
 logging.basicConfig()
 
@@ -20,7 +22,8 @@ class DTNReceiveManager:
         self._modules = {}
 
         self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._s.bind((socket.gethostname(), port))
+        #self._s.bind((socket.gethostname(), port))
+        self._s.bind(("128.97.93.10", port))
         self._s.listen(5)
 
         while 1:
@@ -28,7 +31,7 @@ class DTNReceiveManager:
                 (c, addr) = self._s.accept()
             except KeyboardInterrupt:
                 self._s.close()
-                exit(0)
+                sys.exit(0)
             if os.fork():
                 #parent, close the connection
                 c.close()
@@ -36,7 +39,7 @@ class DTNReceiveManager:
                 #child, handle the connection
                 self.handleConnection(c, addr)
                 c.shutdown(2)
-                exit(0)
+                sys.exit(0)
 
     def registerModule(self, m):
         if isinstance(m, module.BaseModule):
@@ -58,23 +61,22 @@ class DTNReceiveManager:
                 header = ""
 		while len(header) < struct.calcsize("!BH"):
 		    header += socket.recv(1)
-                (type, len) = struct.unpack("!BH", header)
+                (type, length) = struct.unpack("!BH", header)
 		msg = ""
-		while len(m) < len:
+		while len(msg) < length:
 		    msg += socket.recv(1)
                 # execute the registered callback function for the module.
                 if type in self._modules.keys():
                     self._modules[type](msg)
                 else:
-                    self._log.debug("No module for type %d"%(msg.getType()))
+                    self._log.debug("No module for type %d"%(type))
                 #socket.send("OK\n")
                 
             except KeyboardInterrupt:
-                self.file.close()
                 socket.shutdown(2)
                 self._s.close()
 
-                exit(0)
+                sys.exit(0)
                 
             self._log.info("Received message: %s"%(msg))
        
