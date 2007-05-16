@@ -12,9 +12,14 @@ logging.basicConfig()
 SERVER = sys.argv[1]
 PORT = 14000
 
+#the netcar id used to identify the data from this node
+f = file("/etc/netcarinit/netcarID", 'r')
+netcarID = f.read()
+f.close()
+
 ########################
 # initialize the modules
-dtns = DTNSendManager.DTNSendManager(SERVER, PORT)
+dtns = DTNSendManager.DTNSendManager(SERVER, PORT, netcarID)
 #baseModule = module.BaseModule()
 
 #this is a special module which handles data from the gps.

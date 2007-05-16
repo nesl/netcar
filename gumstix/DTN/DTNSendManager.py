@@ -55,7 +55,7 @@ class DTNSendManager(threading.Thread):
     that it polls periodically. If there is something in the queue, it will
     send it to the server.
     """
-    def __init__(self, server, port):
+    def __init__(self, server, port, netcarID):
         threading.Thread.__init__(self)
         self._log = logging.getLogger("DTNSendManager")
         self._log.setLevel(logging.DEBUG)
@@ -63,8 +63,9 @@ class DTNSendManager(threading.Thread):
 
         self._server = server
         self._port = port
+        self._netcarID = netcarID
         self._queues = []
-        self._connection = connection.SocketConnection(self._server, self._port)
+        self._connection = connection.SocketConnection(self._server, self._port, self._netcarID)
 
     def addQueue(self, q):
         """ Add a queue to the queuelist. """

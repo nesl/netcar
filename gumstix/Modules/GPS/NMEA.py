@@ -111,8 +111,10 @@ class NMEA:
         minutes = string.atoi(words[0][2:4])
         seconds = string.atoi(words[0][4:6])
         if words[1] == "V" or words[1] == "A":
-            self.time = ("%02d/%02d/%04d %02d:%02d:%02d" %
-                (day, month, year, hours, minutes, seconds))
+            #self.time = ("%02d/%02d/%04d %02d:%02d:%02d" %
+            #    (day, month, year, hours, minutes, seconds))
+            self.time = ("%04d-%02d-%02d %02d:%02d:%02d" %
+                    (year, month, day, hours, minutes, seconds))
             if words[6]: self.speed = string.atof(words[6])
             if words[7]: self.track = string.atof(words[7])
 

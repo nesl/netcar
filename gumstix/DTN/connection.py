@@ -29,7 +29,7 @@ class SocketConnection(Connection):
     """
         This class implements a socket connection to a server.
     """
-    def __init__(self, server, port):
+    def __init__(self, server, port, netcarID):
         Connection.__init__(self)
         self._log = logging.getLogger("SocketConnection")
         self._log.setLevel(logging.DEBUG)
@@ -38,7 +38,8 @@ class SocketConnection(Connection):
 
         self._server = server
         self._port = port
-
+        self._netcarID = netcarID
+        
         self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #set the timeout of the socket
         self._s.settimeout(5.0)
@@ -83,6 +84,12 @@ class SocketConnection(Connection):
             self._s.settimeout(5.0)
             self._s.connect((self._server, self._port))
             self._file = self._s.makefile("rb")
+            # send our id
+            self._s.send(self._netcarID)
+            line = self._file.readline().strip()
+            if line != "OK":
+                self._connected = False
+                return False
             self._connected = True
             return True
         except socket.error, e:
