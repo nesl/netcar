@@ -85,7 +85,7 @@ class LocationDecodingModule(module.BaseModule):
 
     def receiveMessage(self, msg):
         gpsMsg = message.GPSMessage(msg=msg)
-        print gpsMsg, "received %s"%(time.strftime("%d/%m/%Y %H:%M:%S", time.gmtime()),) 
+        print gpsMsg, "received %s"%(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),) 
 
         xml = self._XMLForm%(gpsMsg.getAltitude(), 
                 gpsMsg.getLatitude(),

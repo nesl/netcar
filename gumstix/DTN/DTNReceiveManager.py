@@ -19,7 +19,7 @@ class DTNReceiveManager:
     """
     def __init__(self, port):
         self._log = logging.getLogger("DTNReceiveManager")
-        self._log.setLevel(logging.DEBUG)
+        self._log.setLevel(logging.WARNING)
 
         self._modules = {}
 
