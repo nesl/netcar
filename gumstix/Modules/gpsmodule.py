@@ -2,6 +2,7 @@ import logging
 import threading
 import module
 import math
+import time
 import sys, traceback
 import urllib, urllib2
 
@@ -84,6 +85,8 @@ class LocationDecodingModule(module.BaseModule):
 
     def receiveMessage(self, msg):
         gpsMsg = message.GPSMessage(msg=msg)
+        print gpsMsg, "received %s"%(time.strftime("%d/%m/%Y %H:%M:%S", time.gmtime()),) 
+
         xml = self._XMLForm%(gpsMsg.getAltitude(), 
                 gpsMsg.getLatitude(),
                 gpsMsg.getLongitude(),
@@ -112,8 +115,6 @@ class LocationDecodingModule(module.BaseModule):
             print "SensorBase: Something went wrong: " 
             print "%s\n%s"%(e, traceback.extract_tb(tr))
         
-        print gpsMsg
-
     def run(self):
         """ Nothing to do for now. """
         pass
