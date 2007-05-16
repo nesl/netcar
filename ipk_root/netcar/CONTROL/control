@@ -1,8 +1,8 @@
 Package: netcarroot
 Priority: optional
-Version: 0.0.11
+Version: 0.1.0
 Architecture: arm
-Maintainer: Younghun Kim <kimyh@ucla.edu>
+Maintainer: Younghun Kim <kimyh@ucla.edu>, Thomas Schmid <thomas.schmid@ucla.edu>
 Depends: 
 Section: comm
 Source: http://www.seas.ucla.edu/~kimy

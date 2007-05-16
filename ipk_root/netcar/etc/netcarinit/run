@@ -2,5 +2,5 @@
 #/home/GPSmodule/RUN
 #/usr/bin/GPSmodule/RUN
 cd /usr/local/
-/usr/bin/python MainSender.py
+/usr/bin/python MainSender.py 128.97.93.10 /dev/ttyS3
 

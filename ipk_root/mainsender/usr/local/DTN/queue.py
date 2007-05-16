@@ -32,7 +32,6 @@
   @author Thomas Schmid <thomas.schmid@ucla.edu>
 """
 
-import Queue as pyQueue
 import message
 import threading
 

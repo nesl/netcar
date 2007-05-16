@@ -2,6 +2,7 @@ import socket
 import time
 import logging
 import message
+import os
 
 from Modules import module
 
@@ -28,14 +29,17 @@ class SocketConnection(Connection):
     """
         This class implements a socket connection to a server.
     """
-    def __init__(self, server, port):
+    def __init__(self, server, port, netcarID):
         Connection.__init__(self)
         self._log = logging.getLogger("SocketConnection")
         self._log.setLevel(logging.DEBUG)
 
+        self._SFD = "#$*"
+
         self._server = server
         self._port = port
-
+        self._netcarID = netcarID
+        
         self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #set the timeout of the socket
         self._s.settimeout(5.0)
@@ -54,10 +58,10 @@ class SocketConnection(Connection):
                 time.sleep(0.5)
         try:
             # send the message encapsulated into a normal message.
-            self._s.send(message.Message(msgType=msg.getType(), content=msg.encode()).encode()+"\n")
-            line = self._file.readline().strip()
-            if line != "OK":
-                return False
+            self._s.send(self._SFD + message.Message(msgType=msg.getType(), content=msg.encode()).encode())
+            #line = self._file.readline().strip()
+            #if line != "OK":
+            #    return False
             return True
         except socket.error, e:
             self._log.error("sendMessage: SocketError: "+str(e))
@@ -65,6 +69,8 @@ class SocketConnection(Connection):
                 #Broken Pipe error. Invalidate the connection.
                 self._log.error("sendMessage: invalidating connection")
                 self._connected = False
+            # reconnect ppp
+            os.system("/etc/ppp/keepalive.sh")
 
         return False
 
@@ -78,9 +84,17 @@ class SocketConnection(Connection):
             self._s.settimeout(5.0)
             self._s.connect((self._server, self._port))
             self._file = self._s.makefile("rb")
+            # send our id
+            self._s.send(self._netcarID)
+            line = self._file.readline().strip()
+            if line != "OK":
+                self._connected = False
+                return False
             self._connected = True
             return True
         except socket.error, e:
             self._log.error("connect: SocketError: "+str(e))
+            # reconnect ppp
+            os.system("/etc/ppp/keepalive.sh")
             return False
 

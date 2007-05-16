@@ -1,6 +1,10 @@
 import socket
 import os
+import sys
 import message
+import struct
+from Modules import module
+
 import logging
 logging.basicConfig()
 
@@ -15,12 +19,15 @@ class DTNReceiveManager:
     """
     def __init__(self, port):
         self._log = logging.getLogger("DTNReceiveManager")
-        self._log.setLevel(logging.DEBUG)
+        self._log.setLevel(logging.WARNING)
 
         self._modules = {}
 
         self._s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._s.bind((socket.gethostname(), port))
+        #self._s.bind((socket.gethostname(), port))
+        self._s.bind(("", port))
+
+    def start(self):
         self._s.listen(5)
 
         while 1:
@@ -28,7 +35,7 @@ class DTNReceiveManager:
                 (c, addr) = self._s.accept()
             except KeyboardInterrupt:
                 self._s.close()
-                exit(0)
+                sys.exit(0)
             if os.fork():
                 #parent, close the connection
                 c.close()
@@ -36,7 +43,7 @@ class DTNReceiveManager:
                 #child, handle the connection
                 self.handleConnection(c, addr)
                 c.shutdown(2)
-                exit(0)
+                sys.exit(0)
 
     def registerModule(self, m):
         if isinstance(m, module.BaseModule):
@@ -44,23 +51,41 @@ class DTNReceiveManager:
             self._modules[m.getMessageType()] = m.getReceiveFunction()
 
     def handleConnection(self, socket, address):
-        self.file = socket.makefile("rb")
+        # the first thing we receive is the netcar id.
+        f = socket.makefile("rb")
+        netcarID = f.readline().strip()
+        socket.send("OK\n")
+        f.close()
         while 1:
             try:
-                msg = message.Message(msg=self.file.readline().strip())
+                while 1:
+                    c = socket.recv(1)
+                    if c == "#":
+                        c = socket.recv(1)
+                        if c == "$":
+                            c = socket.recv(1)
+                            if c == "*":
+                                #found start of frame delimiter!
+                                break
+                header = ""
+		while len(header) < struct.calcsize("!BH"):
+		    header += socket.recv(1)
+                (type, length) = struct.unpack("!BH", header)
+		msg = ""
+		while len(msg) < length:
+		    msg += socket.recv(1)
                 # execute the registered callback function for the module.
-                if msg.getType() in self._modules.keys():
-                    self._modules[msg.getType()](msg)
+                if type in self._modules.keys():
+                    self._modules[type](netcarID, msg)
                 else:
-                    self._log.debug("No module for type %d"%(msg.getType()))
-                socket.send("OK\n")
+                    self._log.debug("No module for type %d"%(type))
+                #socket.send("OK\n")
                 
             except KeyboardInterrupt:
-                self.file.close()
                 socket.shutdown(2)
                 self._s.close()
 
-                exit(0)
+                sys.exit(0)
                 
             self._log.info("Received message: %s"%(msg))
        
