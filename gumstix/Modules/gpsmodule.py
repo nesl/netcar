@@ -83,7 +83,7 @@ class LocationDecodingModule(module.BaseModule):
     def getMessageType(self):
         return message.GPS_MESSAGE
 
-    def receiveMessage(self, msg):
+    def receiveMessage(self, netcarID, msg):
         gpsMsg = message.GPSMessage(msg=msg)
         print gpsMsg, "received %s"%(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),) 
 
@@ -94,7 +94,7 @@ class LocationDecodingModule(module.BaseModule):
                 gpsMsg.getSatellites(),
                 gpsMsg.getSpeed(),
                 gpsMsg.getTime(),
-                "Thomas",
+                netcarID,
                 10)
         param = {'email': self._email,
             'pw' : self._password,

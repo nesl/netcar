@@ -51,6 +51,11 @@ class DTNReceiveManager:
             self._modules[m.getMessageType()] = m.getReceiveFunction()
 
     def handleConnection(self, socket, address):
+        # the first thing we receive is the netcar id.
+        f = socket.makefile("rb")
+        netcarID = f.readline().strip()
+        socket.send("OK\n")
+        f.close()
         while 1:
             try:
                 while 1:
@@ -71,7 +76,7 @@ class DTNReceiveManager:
 		    msg += socket.recv(1)
                 # execute the registered callback function for the module.
                 if type in self._modules.keys():
-                    self._modules[type](msg)
+                    self._modules[type](netcarID, msg)
                 else:
                     self._log.debug("No module for type %d"%(type))
                 #socket.send("OK\n")
