@@ -99,5 +99,20 @@ class GPSMessage(Message):
     def getType(self):
         return GPS_MESSAGE
 
+    def getAltitude(self):
+        return self._alt
+    def getLongitude(self):
+        return self._lon
+    def getLatitude(self):
+        return self._lat
+    def getPrecision(self):
+        return self._precision
+    def getSatellites(self):
+        return self._satellites
+    def getSpeed(self):
+        return self._speed
+    def getTime(self):
+        return self._time
+
     def __str__(self):
         return "lat: %f, lon: %f, alt: %f, precision: %f, satellites: %d, speed: %f, time: %s"%(self._lat, self._lon, self._alt, self._precision, self._satellites, self._speed, self._time)

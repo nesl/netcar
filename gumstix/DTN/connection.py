@@ -2,6 +2,7 @@ import socket
 import time
 import logging
 import message
+import os
 
 from Modules import module
 
@@ -67,6 +68,8 @@ class SocketConnection(Connection):
                 #Broken Pipe error. Invalidate the connection.
                 self._log.error("sendMessage: invalidating connection")
                 self._connected = False
+            # reconnect ppp
+            os.system("/etc/ppp/keepalive.sh")
 
         return False
 
@@ -84,5 +87,7 @@ class SocketConnection(Connection):
             return True
         except socket.error, e:
             self._log.error("connect: SocketError: "+str(e))
+            # reconnect ppp
+            os.system("/etc/ppp/keepalive.sh")
             return False
 

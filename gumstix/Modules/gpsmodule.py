@@ -2,6 +2,8 @@ import logging
 import threading
 import module
 import math
+import sys, traceback
+import urllib, urllib2
 
 from DTN import queue
 from DTN import message
@@ -56,12 +58,60 @@ class LocationDecodingModule(module.BaseModule):
     """
     def __init__(self):
         module.BaseModule.__init__(self)
+        self._email = 'kimyh@ucla.edu'
+        self._password = 'password'
+        self._project = 85
+        self._table = 'GPS'
+        self._XMLForm = """
+<table>
+  <row>
+    <field name="Altitude">%f</field>
+    <field name="Latitude">%f</field>
+    <field name="Longitude">%f</field>
+    <field name="Precision">%f</field>
+    <field name="SatelliteCount">%f</field>
+    <field name="Speed">%f</field>
+    <field name="TimeStamp">%s</field>
+    <field name="UID">%s</field>
+    <field name="SID">%s</field>
+  </row>
+</table>
+"""
+        self._sb_api = 'http://sensorbase.org/alpha/upload.php' # the interface of sensorbase used for uploading data
 
     def getMessageType(self):
         return message.GPS_MESSAGE
 
     def receiveMessage(self, msg):
         gpsMsg = message.GPSMessage(msg=msg)
+        xml = self._XMLForm%(gpsMsg.getAltitude(), 
+                gpsMsg.getLatitude(),
+                gpsMsg.getLongitude(),
+                gpsMsg.getPrecision(),
+                gpsMsg.getSatellites(),
+                gpsMsg.getSpeed(),
+                gpsMsg.getTime(),
+                "Thomas",
+                10)
+        param = {'email': self._email,
+            'pw' : self._password,
+            'project_id' : self._project,
+            'data_string' : xml,
+            'type' : 'xml',
+            'tableName' : self._table}
+        try:
+            data = urllib.urlencode(param)
+            req = urllib2.Request(self._sb_api, data)
+            response = urllib2.urlopen(req)
+    
+            print "SensorBase Result: "+response.read()
+            response.close()
+        except:
+            e = sys.exc_info()[1]
+            tr = sys.exc_info()[2]
+            print "SensorBase: Something went wrong: " 
+            print "%s\n%s"%(e, traceback.extract_tb(tr))
+        
         print gpsMsg
 
     def run(self):

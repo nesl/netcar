@@ -147,7 +147,7 @@ class GPSThread ( threading.Thread):
                 #check if it is different from the last fix:
                 currentCoordinates = self.getCoordinates()
                 self._log.debug("Coordinates: "+str(currentCoordinates))
-                if True or coordinates != currentCoordinates:
+                if coordinates != currentCoordinates:
                     coordinates = currentCoordinates
                     for f in self._GPSFixNotificationFunctions:
                         # notify the registered functions of the change.
